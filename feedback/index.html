@@ -99,6 +99,27 @@
   }
   .recommend-scale { display: flex; justify-content: space-between; margin-top: 12px; font-size: 12px; color: #555; padding: 0 12px; }
 
+  /* Chip picker */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .chip {
+    background: #0a0a0a;
+    border: 1.5px solid #2a2a2a;
+    color: #ccc;
+    padding: 10px 18px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .chip:hover { border-color: #555; color: #fff; }
+  .chip.selected { background: #c8ff00; color: #0a0a0a; border-color: #c8ff00; }
+  .chip-hint { font-size: 12px; color: #555; margin-top: 10px; font-style: italic; }
+
+  /* Required mark */
+  .required { color: #ff6b6b; margin-left: 4px; }
+
   /* Submit */
   .submit-btn {
     display: block;
@@ -177,30 +198,61 @@
     <div class="card">
       <div class="card-header">
         <span class="card-num n2">02 / The Most Helpful Part</span>
-        <h3>What was the most helpful thing you learned?</h3>
-        <p class="hint">From the sprint itself, or from working&nbsp;with&nbsp;me</p>
+        <h3>What was most helpful?</h3>
+        <p class="hint">Pick all that apply</p>
       </div>
-      <textarea class="big-input" id="most-helpful" rows="3" placeholder="e.g. Learning how to write prompts that think about the user's experience, not just the features..."></textarea>
+      <div class="chip-group" id="helpful-chips">
+        <button type="button" class="chip" onclick="toggleChip(this)">Learning Claude Code</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Writing better prompts</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Understanding the user journey</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Connecting real services (APIs, databases)</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Deploying live apps</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">1:1 support from Jitsy</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Building in community</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Demo day prep</button>
+      </div>
+      <textarea class="big-input" id="most-helpful" rows="2" style="margin-top: 14px;" placeholder="Anything else? (optional)"></textarea>
     </div>
 
     <!-- 3. What was missing -->
     <div class="card">
       <div class="card-header">
-        <span class="card-num n3">03 / What Was Missing</span>
-        <h3>What did you wish we had covered more?</h3>
-        <p class="hint">Something you felt was missing or you'd love to have&nbsp;next&nbsp;time</p>
+        <span class="card-num n3">03 / What You'd Want More Of</span>
+        <h3>What should we add or cover more?</h3>
+        <p class="hint">Pick all that apply</p>
       </div>
-      <textarea class="big-input" id="missing" rows="3" placeholder="e.g. More hands-on time with deploying apps and connecting APIs..."></textarea>
+      <div class="chip-group" id="missing-chips">
+        <button type="button" class="chip" onclick="toggleChip(this)">More hands-on time</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Deeper API integrations</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Design and UI training</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Marketing your app</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Payments and monetization</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">App Store publishing</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">AI agents and automation</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">More office hours</button>
+      </div>
+      <textarea class="big-input" id="missing" rows="2" style="margin-top: 14px;" placeholder="Anything else? (optional)"></textarea>
     </div>
 
-    <!-- 4. Testimonial -->
+    <!-- 4. One word + testimonial -->
     <div class="card">
       <div class="card-header">
-        <span class="card-num n4">04 / Your Testimonial</span>
-        <h3>How would you describe this sprint to a friend?</h3>
-        <p class="hint">One to three sentences. Speak from the heart. I may share this&nbsp;(with&nbsp;permission).</p>
+        <span class="card-num n4">04 / In One Word</span>
+        <h3>This sprint was...</h3>
+        <p class="hint">Pick the one that fits best</p>
       </div>
-      <textarea class="big-input" id="testimonial" rows="4" placeholder="e.g. I came in not knowing what I was doing, and I'm leaving with a real product. This is the only workshop where you actually build something..."></textarea>
+      <div class="chip-group" id="word-chips">
+        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Life-changing</button>
+        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Empowering</button>
+        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Eye-opening</button>
+        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Practical</button>
+        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Inspiring</button>
+        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Challenging</button>
+        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Fun</button>
+        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Exactly what I needed</button>
+      </div>
+      <p class="chip-hint">Now add one sentence about your experience (I may share this&nbsp;with&nbsp;permission):</p>
+      <textarea class="big-input" id="testimonial" rows="3" style="margin-top: 10px;" placeholder="e.g. I walked in with an idea and walked out with a real product I can show people..."></textarea>
     </div>
 
     <!-- 5. Pricing -->
@@ -227,20 +279,30 @@
     <div class="card">
       <div class="card-header">
         <span class="card-num n6">06 / What's Next</span>
-        <h3>What do you want to learn or do next?</h3>
-        <p class="hint">Could be a specific skill, tool, or something you want to&nbsp;build</p>
+        <h3>What do you want next?</h3>
+        <p class="hint">Pick all that apply</p>
       </div>
-      <textarea class="big-input" id="whats-next" rows="3" placeholder="e.g. I want to add payments to my app, learn more about automating content, and launch to real customers..."></textarea>
+      <div class="chip-group" id="next-chips">
+        <button type="button" class="chip" onclick="toggleChip(this)">Launch my app to real customers</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Add payments (Stripe)</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Build another app</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Learn AI automation</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Marketing + growth</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Turn my app into a business</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Advanced Claude Code features</button>
+        <button type="button" class="chip" onclick="toggleChip(this)">Ongoing 1:1 support from Jitsy</button>
+      </div>
+      <textarea class="big-input" id="whats-next" rows="2" style="margin-top: 14px;" placeholder="Anything else? (optional)"></textarea>
     </div>
 
     <!-- 7. Name -->
     <div class="card">
       <div class="card-header">
         <span class="card-num n7">07 / Who You Are</span>
-        <h3>Your name</h3>
-        <p class="hint">Optional, but helps me connect your feedback to&nbsp;your&nbsp;project</p>
+        <h3>Your name <span class="required">*</span></h3>
+        <p class="hint">So I can connect your feedback to&nbsp;your&nbsp;project</p>
       </div>
-      <input type="text" class="big-input" id="name" placeholder="Your name (optional)">
+      <input type="text" class="big-input" id="name" placeholder="Your name" required>
     </div>
 
     <button class="submit-btn" onclick="submitForm()">Submit My Wrap-Up</button>
@@ -276,6 +338,23 @@
     document.getElementById(labelId).textContent = label.text;
   }
 
+  // Chip pickers
+  function toggleChip(el) {
+    el.classList.toggle('selected');
+  }
+
+  function toggleChipSingle(el, groupId) {
+    const group = document.getElementById(groupId);
+    group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function getSelectedChips(groupId) {
+    return Array.from(document.querySelectorAll('#' + groupId + ' .chip.selected'))
+      .map(c => c.textContent.trim())
+      .join(', ');
+  }
+
   // Price reactions
   function updatePrice(val) {
     const num = parseInt(val);
@@ -296,20 +375,34 @@
   // Submit
   async function submitForm() {
     const btn = document.querySelector('.submit-btn');
+
+    // Validate name
+    const nameField = document.getElementById('name');
+    if (!nameField.value.trim()) {
+      alert('Please add your name before submitting.');
+      nameField.focus();
+      nameField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     btn.disabled = true;
     btn.textContent = 'Sending...';
 
     const data = {
+      name: nameField.value.trim(),
       before_sprint: document.getElementById('before').value,
       before_label: document.getElementById('before-label').textContent,
       after_sprint: document.getElementById('after').value,
       after_label: document.getElementById('after-label').textContent,
-      most_helpful: document.getElementById('most-helpful').value,
-      missing: document.getElementById('missing').value,
+      most_helpful_picks: getSelectedChips('helpful-chips'),
+      most_helpful_other: document.getElementById('most-helpful').value,
+      missing_picks: getSelectedChips('missing-chips'),
+      missing_other: document.getElementById('missing').value,
+      one_word: getSelectedChips('word-chips'),
       testimonial: document.getElementById('testimonial').value,
       willing_to_pay: '$' + document.getElementById('price').value,
-      whats_next: document.getElementById('whats-next').value,
-      name: document.getElementById('name').value || 'Anonymous'
+      whats_next_picks: getSelectedChips('next-chips'),
+      whats_next_other: document.getElementById('whats-next').value
     };
 
     try {
