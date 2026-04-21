@@ -31,20 +31,14 @@
   .card-num.n5 { background: #ffbd2e20; color: #ffbd2e; }
   .card-num.n6 { background: #27c93f20; color: #27c93f; }
   .card-num.n7 { background: #c8ff0020; color: #c8ff00; }
-  .card-num.n8 { background: #ff6b6b20; color: #ff6b6b; }
-  .card-num.n9 { background: #6bc5ff20; color: #6bc5ff; }
-  .card-num.n10 { background: #c084fc20; color: #c084fc; }
-
-  /* Price slider */
-  .pricing-section { text-align: center; margin-top: 12px; }
-  .price-display { font-size: 56px; font-weight: 900; color: #c8ff00; line-height: 1; margin-bottom: 6px; font-family: 'Inter', sans-serif; }
-  .price-reaction { font-size: 15px; color: #888; min-height: 22px; margin-bottom: 20px; }
 
   .card h3 { font-size: 20px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.3px; }
-  .card p.hint { font-size: 14px; color: #666; font-style: italic; }
+  .card p.hint { font-size: 14px; color: #666; font-style: italic; line-height: 1.6; }
 
-  /* Energy slider */
-  .energy-slider { margin: 20px 0 12px; position: relative; padding: 0 8px; }
+  /* Dual energy slider */
+  .journey-group { margin: 18px 0 8px; }
+  .journey-label { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .energy-slider { position: relative; padding: 4px 8px 0; }
   .energy-slider input[type="range"] {
     width: 100%;
     height: 8px;
@@ -55,48 +49,14 @@
   }
   .energy-slider input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 28px; height: 28px;
+    width: 26px; height: 26px;
     border-radius: 50%;
     background: #fff;
     border: 3px solid #c8ff00;
     cursor: pointer;
     box-shadow: 0 2px 12px rgba(200,255,0,0.4);
   }
-  .energy-labels { display: flex; justify-content: space-between; margin-top: 16px; font-size: 12px; color: #666; padding: 0 8px; }
-
-  /* Three word inputs */
-  .three-words { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 12px; }
-  .three-words input {
-    width: 100%;
-    background: #0a0a0a;
-    border: 1px solid #2a2a2a;
-    border-radius: 10px;
-    padding: 14px 12px;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    text-align: center;
-    outline: none;
-    transition: all 0.2s;
-  }
-  .three-words input:focus { border-color: #c8ff00; }
-  .three-words input::placeholder { color: #444; }
-  @media (max-width: 500px) { .three-words { grid-template-columns: 1fr; } }
-
-  /* Emoji picker */
-  .emoji-picker { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
-  .emoji-btn {
-    font-size: 28px;
-    background: #0a0a0a;
-    border: 2px solid #2a2a2a;
-    border-radius: 14px;
-    padding: 10px 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .emoji-btn:hover { border-color: #555; transform: translateY(-2px); }
-  .emoji-btn.selected { border-color: #c8ff00; background: #c8ff0010; transform: scale(1.05); }
+  .energy-value { font-size: 14px; color: #c8ff00; font-weight: 700; text-align: center; margin-top: 10px; }
 
   /* Textarea */
   .big-input {
@@ -116,10 +76,10 @@
   .big-input:focus { border-color: #c8ff00; }
   .big-input::placeholder { color: #444; }
 
-  /* Recommend slider */
-  .recommend-section { text-align: center; margin-top: 12px; }
-  .recommend-score { font-size: 72px; font-weight: 900; line-height: 1; margin-bottom: 8px; transition: color 0.3s; }
-  .recommend-reaction { font-size: 16px; color: #888; min-height: 24px; margin-bottom: 20px; transition: all 0.3s; }
+  /* Price slider */
+  .pricing-section { text-align: center; margin-top: 12px; }
+  .price-display { font-size: 56px; font-weight: 900; color: #c8ff00; line-height: 1; margin-bottom: 6px; font-family: 'Inter', sans-serif; }
+  .price-reaction { font-size: 15px; color: #888; min-height: 22px; margin-bottom: 20px; }
   .recommend-slider { width: 100%; padding: 0 8px; }
   .recommend-slider input[type="range"] {
     width: 100%;
@@ -138,48 +98,6 @@
     cursor: pointer;
   }
   .recommend-scale { display: flex; justify-content: space-between; margin-top: 12px; font-size: 12px; color: #555; padding: 0 12px; }
-
-  /* Permissions */
-  .perm-item {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    padding: 14px 16px;
-    background: #0a0a0a;
-    border: 1px solid #2a2a2a;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .perm-item:hover { border-color: #444; }
-  .perm-item.checked { border-color: #c8ff00; background: #c8ff0008; }
-  .perm-item input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 22px; height: 22px;
-    border: 2px solid #444;
-    border-radius: 6px;
-    background: transparent;
-    cursor: pointer;
-    flex-shrink: 0;
-    position: relative;
-    margin-top: 1px;
-  }
-  .perm-item.checked input[type="checkbox"] {
-    background: #c8ff00;
-    border-color: #c8ff00;
-  }
-  .perm-item.checked input[type="checkbox"]::after {
-    content: '';
-    position: absolute;
-    left: 6px; top: 2px;
-    width: 6px; height: 11px;
-    border: solid #0a0a0a;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-  }
-  .perm-label { font-size: 15px; color: #ccc; font-weight: 500; }
 
   /* Submit */
   .submit-btn {
@@ -229,111 +147,68 @@
     <div class="header">
       <div class="tag">Sprint Wrap-Up</div>
       <h1>You built something <span class="accent">real</span>.</h1>
-      <p>Before we celebrate, help me make this sprint even better for the next cohort. Takes 3&nbsp;minutes.</p>
+      <p>Before we close out, help me make this sprint even better for the next cohort. Takes&nbsp;2&nbsp;minutes.</p>
     </div>
 
-    <!-- 1. Energy check -->
+    <!-- 1. Your Journey -->
     <div class="card">
       <div class="card-header">
         <span class="card-num n1">01 / Your Journey</span>
-        <h3>Where are you now?</h3>
-        <p class="hint">Drag the slider to show how you feel&nbsp;today</p>
+        <h3>Where were you, and where are you now?</h3>
+        <p class="hint">Drag each slider to show how ready you felt&nbsp;and&nbsp;feel</p>
       </div>
-      <div class="energy-slider">
-        <input type="range" min="0" max="100" value="50" id="energy" oninput="updateEnergy(this.value)">
-      </div>
-      <div class="energy-labels">
-        <span>Day 1 me</span>
-        <span id="energy-label" style="color: #c8ff00; font-weight: 700;">Somewhere in between</span>
-        <span>Builder for life</span>
-      </div>
-    </div>
-
-    <!-- 2. Three words -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n2">02 / Your App</span>
-        <h3>Your app in 3 words</h3>
-        <p class="hint">What would you tell a stranger on the street?</p>
-      </div>
-      <div class="three-words">
-        <input type="text" id="word1" placeholder="Word 1" maxlength="20">
-        <input type="text" id="word2" placeholder="Word 2" maxlength="20">
-        <input type="text" id="word3" placeholder="Word 3" maxlength="20">
-      </div>
-    </div>
-
-    <!-- 3. Best part -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n3">03 / The Highlight</span>
-        <h3>What felt amazing?</h3>
-        <p class="hint">Pick an emoji and tell me why</p>
-      </div>
-      <div class="emoji-picker" id="best-emojis">
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'best-emojis')">🎉</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'best-emojis')">🤯</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'best-emojis')">💪</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'best-emojis')">🙌</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'best-emojis')">✨</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'best-emojis')">🚀</button>
-      </div>
-      <textarea class="big-input" id="best-part" rows="2" placeholder="One sentence about what felt great..."></textarea>
-    </div>
-
-    <!-- 4. Hardest part -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n4">04 / The Struggle</span>
-        <h3>What was tough?</h3>
-        <p class="hint">Honest answers help me improve the next sprint</p>
-      </div>
-      <div class="emoji-picker" id="hard-emojis">
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'hard-emojis')">😅</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'hard-emojis')">🤔</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'hard-emojis')">😵‍💫</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'hard-emojis')">🫠</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'hard-emojis')">⏰</button>
-        <button type="button" class="emoji-btn" onclick="selectEmoji(this, 'hard-emojis')">🧠</button>
-      </div>
-      <textarea class="big-input" id="hard-part" rows="2" placeholder="What would you have wanted more help with..."></textarea>
-    </div>
-
-    <!-- 5. Wow moment -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n5">05 / The Wow</span>
-        <h3>When did Claude Code blow your mind?</h3>
-        <p class="hint">A specific moment you won't forget</p>
-      </div>
-      <textarea class="big-input" id="wow-moment" rows="3" placeholder="e.g. When it built a whole landing page from one prompt..."></textarea>
-    </div>
-
-    <!-- 6. Recommend -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n6">06 / The Big Question</span>
-        <h3>Would you recommend this sprint?</h3>
-        <p class="hint">Drag the slider from 0 (nope) to 10 (absolutely)</p>
-      </div>
-      <div class="recommend-section">
-        <div class="recommend-score" id="rec-score">5</div>
-        <div class="recommend-reaction" id="rec-reaction">Right down the middle</div>
-        <div class="recommend-slider">
-          <input type="range" min="0" max="10" value="5" id="recommend" oninput="updateRecommend(this.value)">
+      <div class="journey-group">
+        <div class="journey-label">Before the sprint</div>
+        <div class="energy-slider">
+          <input type="range" min="0" max="100" value="20" id="before" oninput="updateJourney(this.value, 'before-label')">
         </div>
-        <div class="recommend-scale">
-          <span>0</span><span>5</span><span>10</span>
+        <div class="energy-value" id="before-label">Getting my feet wet</div>
+      </div>
+      <div class="journey-group" style="margin-top: 20px;">
+        <div class="journey-label">Right now</div>
+        <div class="energy-slider">
+          <input type="range" min="0" max="100" value="75" id="after" oninput="updateJourney(this.value, 'after-label')">
         </div>
+        <div class="energy-value" id="after-label">Feeling it</div>
       </div>
     </div>
 
-    <!-- 7. Pricing -->
+    <!-- 2. What was most helpful -->
     <div class="card">
       <div class="card-header">
-        <span class="card-num n7">07 / The Value</span>
+        <span class="card-num n2">02 / The Most Helpful Part</span>
+        <h3>What was the most helpful thing you learned?</h3>
+        <p class="hint">From the sprint itself, or from working&nbsp;with&nbsp;me</p>
+      </div>
+      <textarea class="big-input" id="most-helpful" rows="3" placeholder="e.g. Learning how to write prompts that think about the user's experience, not just the features..."></textarea>
+    </div>
+
+    <!-- 3. What was missing -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-num n3">03 / What Was Missing</span>
+        <h3>What did you wish we had covered more?</h3>
+        <p class="hint">Something you felt was missing or you'd love to have&nbsp;next&nbsp;time</p>
+      </div>
+      <textarea class="big-input" id="missing" rows="3" placeholder="e.g. More hands-on time with deploying apps and connecting APIs..."></textarea>
+    </div>
+
+    <!-- 4. Testimonial -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-num n4">04 / Your Testimonial</span>
+        <h3>How would you describe this sprint to a friend?</h3>
+        <p class="hint">One to three sentences. Speak from the heart. I may share this&nbsp;(with&nbsp;permission).</p>
+      </div>
+      <textarea class="big-input" id="testimonial" rows="4" placeholder="e.g. I came in not knowing what I was doing, and I'm leaving with a real product. This is the only workshop where you actually build something..."></textarea>
+    </div>
+
+    <!-- 5. Pricing -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-num n5">05 / The Value</span>
         <h3>Imagine this wasn't sponsored...</h3>
-        <p class="hint">If you were paying for this sprint yourself, how much would&nbsp;it&nbsp;be&nbsp;worth?</p>
+        <p class="hint">If you were paying for this sprint yourself, how much would it be worth to&nbsp;you?</p>
       </div>
       <div class="pricing-section">
         <div class="price-display" id="price-display">$500</div>
@@ -345,59 +220,25 @@
           <span>Free</span><span>$1,500</span><span>$3,000+</span>
         </div>
       </div>
-      <p style="font-size: 13px; color: #555; margin-top: 16px; text-align: center;">This helps me plan future cohorts and price them fairly.</p>
+      <p style="font-size: 13px; color: #555; margin-top: 16px; text-align: center;">This helps me plan and price future cohorts fairly.</p>
     </div>
 
-    <!-- 8. Quote -->
+    <!-- 6. What's next -->
     <div class="card">
       <div class="card-header">
-        <span class="card-num n8">08 / One-Liner</span>
-        <h3>How would you describe this sprint to a friend?</h3>
-        <p class="hint">One sentence. Speak from the heart.</p>
+        <span class="card-num n6">06 / What's Next</span>
+        <h3>What do you want to learn or do next?</h3>
+        <p class="hint">Could be a specific skill, tool, or something you want to&nbsp;build</p>
       </div>
-      <textarea class="big-input" id="quote" rows="3" placeholder="e.g. It's the only workshop where I left with an actual product..."></textarea>
+      <textarea class="big-input" id="whats-next" rows="3" placeholder="e.g. I want to add payments to my app, learn more about automating content, and launch to real customers..."></textarea>
     </div>
 
-    <!-- 8. Permissions -->
+    <!-- 7. Name -->
     <div class="card">
       <div class="card-header">
-        <span class="card-num n9">09 / The Share</span>
-        <h3>Can I share your story?</h3>
-        <p class="hint">Tick anything you're comfortable with. All optional.</p>
-      </div>
-      <div class="perm-item" onclick="toggleCheck(this)">
-        <input type="checkbox" id="perm-quote">
-        <span class="perm-label">Use my quote (above) in marketing and social posts</span>
-      </div>
-      <div class="perm-item" onclick="toggleCheck(this)">
-        <input type="checkbox" id="perm-project">
-        <span class="perm-label">Show my project as an example in future cohorts</span>
-      </div>
-      <div class="perm-item" onclick="toggleCheck(this)">
-        <input type="checkbox" id="perm-photo">
-        <span class="perm-label">Use photos and videos from the sessions</span>
-      </div>
-      <div class="perm-item" onclick="toggleCheck(this)">
-        <input type="checkbox" id="perm-name">
-        <span class="perm-label">Tag my name when you share my story</span>
-      </div>
-    </div>
-
-    <!-- 9. What's next -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n10">10 / The Next Chapter</span>
-        <h3>What's next for you?</h3>
-        <p class="hint">One sentence about what you'll do this week</p>
-      </div>
-      <textarea class="big-input" id="whats-next" rows="2" placeholder="e.g. Send my app to 10 potential customers and get feedback..."></textarea>
-    </div>
-
-    <!-- Name (optional) -->
-    <div class="card">
-      <div class="card-header">
+        <span class="card-num n7">07 / Who You Are</span>
         <h3>Your name</h3>
-        <p class="hint">Optional, but helps me connect your feedback to you</p>
+        <p class="hint">Optional, but helps me connect your feedback to&nbsp;your&nbsp;project</p>
       </div>
       <input type="text" class="big-input" id="name" placeholder="Your name (optional)">
     </div>
@@ -420,42 +261,18 @@
 </div>
 
 <script>
-  // Energy labels
-  const energyLabels = [
+  // Journey labels
+  const journeyLabels = [
     { max: 15, text: 'Barely started' },
-    { max: 35, text: 'Getting there' },
-    { max: 60, text: 'Somewhere in between' },
+    { max: 35, text: 'Getting my feet wet' },
+    { max: 60, text: 'Getting the hang of it' },
     { max: 85, text: 'Feeling it' },
     { max: 100, text: 'Builder for life' }
   ];
 
-  function updateEnergy(val) {
-    const label = energyLabels.find(l => val <= l.max);
-    document.getElementById('energy-label').textContent = label.text;
-  }
-
-  // Recommend reactions
-  const recReactions = {
-    0: { color: '#ff6b6b', text: 'Oof. What went wrong?' },
-    1: { color: '#ff6b6b', text: 'That\'s a rough one' },
-    2: { color: '#ff6b6b', text: 'Tell me what to fix' },
-    3: { color: '#ffbd2e', text: 'Tough, but fixable' },
-    4: { color: '#ffbd2e', text: 'Room to grow' },
-    5: { color: '#ffbd2e', text: 'Right down the middle' },
-    6: { color: '#c8ff00', text: 'Pretty good' },
-    7: { color: '#c8ff00', text: 'Really good' },
-    8: { color: '#c8ff00', text: 'Love this' },
-    9: { color: '#c8ff00', text: 'Almost perfect' },
-    10: { color: '#c8ff00', text: 'Absolutely yes! 🚀' }
-  };
-
-  function updateRecommend(val) {
-    const reaction = recReactions[val];
-    const score = document.getElementById('rec-score');
-    const reactionEl = document.getElementById('rec-reaction');
-    score.textContent = val;
-    score.style.color = reaction.color;
-    reactionEl.textContent = reaction.text;
+  function updateJourney(val, labelId) {
+    const label = journeyLabels.find(l => val <= l.max);
+    document.getElementById(labelId).textContent = label.text;
   }
 
   // Price reactions
@@ -475,56 +292,25 @@
     reaction.textContent = text;
   }
 
-  // Emoji selection
-  function selectEmoji(el, groupId) {
-    const group = document.getElementById(groupId);
-    group.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-    el.classList.add('selected');
-  }
-
-  // Permission toggle
-  function toggleCheck(el) {
-    const cb = el.querySelector('input[type="checkbox"]');
-    cb.checked = !cb.checked;
-    el.classList.toggle('checked', cb.checked);
-  }
-
   // Submit
   async function submitForm() {
     const btn = document.querySelector('.submit-btn');
     btn.disabled = true;
     btn.textContent = 'Sending...';
 
-    // Get emoji selections
-    const bestEmojiEl = document.querySelector('#best-emojis .emoji-btn.selected');
-    const hardEmojiEl = document.querySelector('#hard-emojis .emoji-btn.selected');
-
-    // Collect data
     const data = {
-      energy: document.getElementById('energy').value,
-      energy_label: document.getElementById('energy-label').textContent,
-      three_words: [
-        document.getElementById('word1').value,
-        document.getElementById('word2').value,
-        document.getElementById('word3').value
-      ].filter(w => w).join(', '),
-      best_emoji: bestEmojiEl ? bestEmojiEl.textContent : '',
-      best_part: document.getElementById('best-part').value,
-      hard_emoji: hardEmojiEl ? hardEmojiEl.textContent : '',
-      hard_part: document.getElementById('hard-part').value,
-      wow_moment: document.getElementById('wow-moment').value,
-      recommend_score: document.getElementById('recommend').value,
+      before_sprint: document.getElementById('before').value,
+      before_label: document.getElementById('before-label').textContent,
+      after_sprint: document.getElementById('after').value,
+      after_label: document.getElementById('after-label').textContent,
+      most_helpful: document.getElementById('most-helpful').value,
+      missing: document.getElementById('missing').value,
+      testimonial: document.getElementById('testimonial').value,
       willing_to_pay: '$' + document.getElementById('price').value,
-      quote: document.getElementById('quote').value,
-      permission_quote: document.getElementById('perm-quote').checked ? 'Yes' : 'No',
-      permission_project: document.getElementById('perm-project').checked ? 'Yes' : 'No',
-      permission_photo: document.getElementById('perm-photo').checked ? 'Yes' : 'No',
-      permission_name: document.getElementById('perm-name').checked ? 'Yes' : 'No',
       whats_next: document.getElementById('whats-next').value,
       name: document.getElementById('name').value || 'Anonymous'
     };
 
-    // Send via Formspree (replace with your form ID)
     try {
       const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
         method: 'POST',
