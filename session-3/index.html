@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volta Sprint — Session 1: Claude Code</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a0a;
+    color: #ffffff;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .deck { position: relative; width: 100vw; height: 100vh; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 48px 80px;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none;
+    text-align: center;
+    gap: 0;
+  }
+
+  .slide.active {
+    opacity: 1; transform: translateX(0);
+    pointer-events: all;
+  }
+
+  .slide.exit {
+    opacity: 0; transform: translateX(-40px);
+  }
+
+  h1 {
+    font-size: clamp(34px, 4vw, 58px);
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    text-wrap: balance;
+  }
+
+  h2 {
+    font-size: clamp(26px, 3.2vw, 44px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: clamp(16px, 2vw, 26px);
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #e0e0e0;
+    text-wrap: balance;
+  }
+
+  p, li {
+    font-size: clamp(15px, 1.6vw, 21px);
+    font-weight: 400;
+    line-height: 1.6;
+    color: #b0b0b0;
+    max-width: 900px;
+    text-wrap: pretty;
+  }
+
+  .accent { color: #c8ff00; }
+  .accent-coral { color: #ff6b6b; }
+  .accent-blue { color: #6bc5ff; }
+  .accent-purple { color: #c084fc; }
+  .dim { color: #666; }
+
+  .reveal-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .reveal-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Tags ── */
+  .tag {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    padding: 8px 20px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .tag-session { background: #c8ff00; color: #0a0a0a; }
+  .tag-concept { background: #2a2a2a; color: #888; }
+  .tag-tool { background: #1a1a2e; color: #6bc5ff; }
+  .tag-demo { background: #2e1a1a; color: #ff6b6b; }
+  .tag-action { background: #1a2e1a; color: #c8ff00; }
+  .tag-file { background: #1a1a1a; color: #c8ff00; border: 1px solid #333; }
+  .tag-safety { background: #2e1a2e; color: #c084fc; }
+  .tag-install { background: #1a2e2e; color: #6bc5ff; }
+
+  /* ── Compare cards ── */
+  .compare-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 32px;
+    width: 100%;
+    max-width: 1100px;
+    justify-content: center;
+  }
+
+  .compare-card {
+    flex: 1;
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 36px 28px;
+    text-align: left;
+    max-width: 500px;
+  }
+
+  .compare-card h3 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+
+  .compare-card ul { list-style: none; padding: 0; }
+  .compare-card li { font-size: 19px; padding: 6px 0; color: #b0b0b0; }
+  .compare-card li::before {
+    content: '';
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+
+  .card-lovable li::before { background: #c8ff00; }
+  .card-claude li::before { background: #ff6b6b; }
+  .card-blue li::before { background: #6bc5ff; }
+  .card-green li::before { background: #c8ff00; }
+
+  /* ── Code block (for file examples) ── */
+  .code-block {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 28px 32px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #ccc;
+    max-width: 900px;
+    width: 100%;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block .code-header {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #555;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #222;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .code-block .code-header .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .code-block .code-header .dot-red { background: #ff5f56; }
+  .code-block .code-header .dot-yellow { background: #ffbd2e; }
+  .code-block .code-header .dot-green { background: #27c93f; }
+
+  .code-line { display: block; }
+  .code-comment { color: #555; }
+  .code-key { color: #c8ff00; font-weight: 700; }
+  .code-value { color: #b0b0b0; }
+  .code-heading { color: #fff; font-weight: 700; font-size: 17px; }
+  .code-subheading { color: #6bc5ff; font-weight: 700; }
+  .code-bullet { color: #ff6b6b; }
+  .code-string { color: #c8ff00; }
+  .code-danger { color: #ff6b6b; font-weight: 700; }
+
+  /* ── Terminal mock ── */
+  .terminal {
+    background: #0c0c0c;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 0;
+    max-width: 800px;
+    width: 100%;
+    text-align: left;
+    overflow: hidden;
+    margin-top: 32px;
+  }
+
+  .terminal-bar {
+    background: #1a1a1a;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #222;
+  }
+
+  .terminal-bar .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .terminal-bar .dot-red { background: #ff5f56; }
+  .terminal-bar .dot-yellow { background: #ffbd2e; }
+  .terminal-bar .dot-green { background: #27c93f; }
+
+  .terminal-bar .terminal-title {
+    font-size: 13px;
+    color: #666;
+    margin-left: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .terminal-body {
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    line-height: 2;
+    color: #888;
+  }
+
+  .terminal-body .prompt-sign { color: #c8ff00; font-weight: 700; }
+  .terminal-body .cmd { color: #fff; }
+  .terminal-body .output { color: #666; }
+  .terminal-body .success { color: #27c93f; }
+  .terminal-body .highlight { color: #6bc5ff; }
+  .terminal-body .warning { color: #ffbd2e; }
+
+  /* ── Flow steps ── */
+  .flow-steps {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .flow-step {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 20px 28px;
+    text-align: center;
+  }
+
+  .flow-step .step-num {
+    font-size: 14px;
+    font-weight: 700;
+    color: #c8ff00;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .flow-step .step-label {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .flow-arrow { font-size: 28px; color: #444; }
+
+  /* ── Tool grid ── */
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 32px;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .tool-item {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+
+  .tool-item .tool-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .tool-item .tool-desc {
+    font-size: 15px;
+    color: #888;
+    line-height: 1.4;
+  }
+
+  /* ── Two-col layout ── */
+  .two-col {
+    display: flex;
+    gap: 40px;
+    width: 100%;
+    max-width: 1100px;
+    align-items: flex-start;
+    margin-top: 32px;
+  }
+
+  .two-col > div { flex: 1; }
+
+  /* ── Divider ── */
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: #c8ff00;
+    margin: 24px auto;
+    border-radius: 2px;
+  }
+
+  .subtitle {
+    font-size: clamp(16px, 1.8vw, 22px);
+    color: #666;
+    font-weight: 400;
+    margin-top: 8px;
+  }
+
+  /* ── Command grid ── */
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+    width: 100%;
+    max-width: 1000px;
+    text-align: left;
+  }
+
+  .cmd-card {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .cmd-card .cmd-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: #c8ff00;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 8px 14px;
+    white-space: nowrap;
+    min-width: 130px;
+    text-align: center;
+  }
+
+  .cmd-card .cmd-explain {
+    font-size: 17px;
+    color: #b0b0b0;
+    line-height: 1.4;
+  }
+
+  /* ── Prompt comparison ── */
+  .prompt-compare {
+    display: flex;
+    gap: 28px;
+    margin-top: 32px;
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  .prompt-card {
+    flex: 1;
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: left;
+  }
+
+  .prompt-card.bad {
+    background: #1a1212;
+    border: 1px solid #3a2020;
+  }
+
+  .prompt-card.good {
+    background: #121a12;
+    border: 1px solid #203a20;
+  }
+
+  .prompt-card .prompt-label {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+
+  .prompt-card.bad .prompt-label { color: #ff6b6b; }
+  .prompt-card.good .prompt-label { color: #27c93f; }
+
+  .prompt-card .prompt-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #ccc;
+  }
+
+  /* ── Install card ── */
+  .install-card {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 36px 40px;
+    max-width: 800px;
+    width: 100%;
+    text-align: left;
+    margin-top: 24px;
+  }
+
+  .install-card .install-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .install-card .install-num {
+    font-size: 16px;
+    font-weight: 900;
+    color: #0a0a0a;
+    background: #c8ff00;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .install-card .install-text {
+    font-size: 18px;
+    color: #b0b0b0;
+    line-height: 1.6;
+  }
+
+  .install-card .install-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    color: #c8ff00;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: block;
+    margin-top: 8px;
+    word-break: break-all;
+  }
+
+  /* ── Safety grid ── */
+  .safety-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+    width: 100%;
+    max-width: 1000px;
+    text-align: left;
+  }
+
+  .safety-card {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 24px;
+    border-left: 3px solid #c084fc;
+  }
+
+  .safety-card .safety-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .safety-card .safety-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .safety-card .safety-desc {
+    font-size: 15px;
+    color: #888;
+    line-height: 1.5;
+  }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed;
+    bottom: 24px;
+    right: 32px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+
+  .nav button {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 1px solid #333;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .nav button:hover {
+    background: #c8ff00;
+    color: #0a0a0a;
+    border-color: #c8ff00;
+  }
+
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: #c8ff00;
+    transition: width 0.4s ease;
+    z-index: 100;
+  }
+
+  .counter {
+    position: fixed;
+    bottom: 32px;
+    left: 32px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+    letter-spacing: 2px;
+    z-index: 100;
+  }
+
+  .keyboard-hint {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    color: #333;
+    z-index: 100;
+  }
+
+  .keyboard-hint kbd {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+  }
+
+  /* ── Speaker notes (hidden, for presenter) ── */
+  .speaker-notes {
+    display: none;
+  }
+
+  /* ── Big number ── */
+  .big-number {
+    font-size: clamp(60px, 8vw, 100px);
+    font-weight: 900;
+    color: #c8ff00;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter"></div>
+<div class="keyboard-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> or <kbd>Space</kbd> to navigate</div>
+
+
+<div class="deck" id="deck">
+
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide active">
+    <span class="tag tag-session">Volta</span>
+    <h1>Power<br><span class="accent">Tour</span></h1>
+    <p class="subtitle">Session 3 of 4 . Polish, Learn, Prepare</p>
+    <div class="divider"></div>
+    <p class="dim" style="font-size: 16px; margin-top: 16px;">Women Focused . 4-Week Sprint . April 2026</p>
+  </div>
+
+  <!-- SLIDE 2: Update CLAUDE.md -->
+  <div class="slide">
+    <span class="tag tag-tool">Do this now</span>
+    <h2>Update Your <span class="accent">CLAUDE.md</span></h2>
+    <p style="font-size: 17px; color: #888; margin-bottom: 20px;">Your CLAUDE.md is from Week 1. Your project has changed. Let's fix that so Claude actually remembers what&nbsp;you've&nbsp;built.</p>
+    <div class="code-block reveal-item" style="font-size: 14px; max-width: 850px; text-align: left; line-height: 2;">
+      <div class="code-header">
+        <span style="width:12px;height:12px;border-radius:50%;display:inline-block;background:#ff5f56;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;display:inline-block;background:#ffbd2e;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;display:inline-block;background:#27c93f;"></span>
+        &nbsp; Paste into Claude Code
+      </div>
+      <span class="code-line"><span class="code-value">Read my entire project and rewrite my CLAUDE.md</span></span>
+      <span class="code-line"><span class="code-value">from scratch to reflect the current state. Include:</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">Project name and one-line description</span></span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">Current tech stack and all dependencies</span></span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">All pages and routes that exist</span></span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">Features that are working vs still in progress</span></span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">External services connected (Supabase, Vercel, APIs)</span></span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">Design decisions (colors, fonts, layout approach)</span></span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">Any rules I should always follow for this project</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-value">Keep it concise and structured. This is the file you</span></span>
+      <span class="code-line"><span class="code-value">read every time I start a new conversation with you.</span></span>
+    </div>
+    <p style="margin-top: 20px; font-size: 15px; color: #555;">Do this at the end of every work session. 30 seconds. Saves you from repeating yourself&nbsp;every&nbsp;time.</p>
+  </div>
+
+  <!-- SLIDE 3: Skills -->
+  <div class="slide">
+    <span class="tag tag-tool">Reusable commands</span>
+    <h2>Create a <span class="accent-blue">Skill</span></h2>
+    <p style="font-size: 17px; color: #888; margin-bottom: 20px;">Instead of typing the same long prompt every time, create a command you can reuse&nbsp;forever.</p>
+    <div class="code-block reveal-item" style="font-size: 13px; max-width: 850px; text-align: left; line-height: 1.9;">
+      <div class="code-header">
+        <span style="width:12px;height:12px;border-radius:50%;display:inline-block;background:#ff5f56;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;display:inline-block;background:#ffbd2e;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;display:inline-block;background:#27c93f;"></span>
+        &nbsp; Paste into Claude Code
+      </div>
+      <span class="code-line"><span class="code-value">Create a reusable skill called "polish" that I can</span></span>
+      <span class="code-line"><span class="code-value">run anytime by typing /polish. Save it at</span></span>
+      <span class="code-line"><span class="code-value">.claude/skills/polish/SKILL.md</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-value">When I run /polish, it should:</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-bullet">1.</span> <span class="code-value">Scan every page for design inconsistencies</span></span>
+      <span class="code-line"><span class="code-value">   (fonts, colors, spacing, button styles)</span></span>
+      <span class="code-line"><span class="code-bullet">2.</span> <span class="code-value">Test mobile responsiveness at 375px and 768px</span></span>
+      <span class="code-line"><span class="code-bullet">3.</span> <span class="code-value">Find and replace any placeholder or lorem text</span></span>
+      <span class="code-line"><span class="code-bullet">4.</span> <span class="code-value">Check all links, buttons, and navigation work</span></span>
+      <span class="code-line"><span class="code-bullet">5.</span> <span class="code-value">Look for console errors and TypeScript warnings</span></span>
+      <span class="code-line"><span class="code-bullet">6.</span> <span class="code-value">Fix everything found and report what changed</span></span>
+    </div>
+    <div style="display: flex; gap: 16px; margin-top: 20px; max-width: 700px;">
+      <div class="reveal-item" style="flex: 1; background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 16px; text-align: center;">
+        <p style="font-size: 14px; color: #6bc5ff; font-weight: 700; margin-bottom: 4px;">Then just type</p>
+        <p style="font-size: 22px; color: #fff; font-weight: 800; font-family: 'JetBrains Mono', monospace;">/polish</p>
+      </div>
+      <div class="reveal-item" style="flex: 1; background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 16px; text-align: center;">
+        <p style="font-size: 14px; color: #c8ff00; font-weight: 700; margin-bottom: 4px;">Create your own</p>
+        <p style="font-size: 14px; color: #888;">/deploy, /check, /content, /seo — whatever you&nbsp;repeat</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: A/B Testing Intro -->
+  <div class="slide">
+    <span class="tag tag-demo">Don't guess, test</span>
+    <h2><span class="accent-coral">A/B Testing:</span> Same Business, Two Vibes</h2>
+    <p style="font-size: 18px; color: #888; margin-bottom: 24px; max-width: 700px;">Let's build a co-working space with a cafe. Same concept. Two completely different&nbsp;design&nbsp;approaches.</p>
+    <div style="display: flex; gap: 20px; width: 100%; max-width: 900px; align-items: stretch; margin-top: 8px;">
+      <div class="reveal-item" style="flex: 1; background: #141414; border: 1px solid #2a2a2a; border-radius: 16px; padding: 28px; text-align: center; border-top: 3px solid #c8ff00;">
+        <p style="font-size: 14px; color: #c8ff00; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Version A</p>
+        <p style="font-size: 22px; color: #fff; font-weight: 800; margin-bottom: 8px;">Gen Z Modern</p>
+        <p style="font-size: 14px; color: #888; line-height: 1.6;">Bold, vibrant, playful. Neon accents, rounded shapes, casual tone. The visitor thinks: "This place&nbsp;gets&nbsp;me."</p>
+      </div>
+      <div style="display: flex; align-items: center; flex-shrink: 0;">
+        <p style="font-size: 16px; color: #444; font-weight: 700;">vs</p>
+      </div>
+      <div class="reveal-item" style="flex: 1; background: #141414; border: 1px solid #2a2a2a; border-radius: 16px; padding: 28px; text-align: center; border-top: 3px solid #ff6b6b;">
+        <p style="font-size: 14px; color: #ff6b6b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Version B</p>
+        <p style="font-size: 22px; color: #fff; font-weight: 800; margin-bottom: 8px;">Professional Chic</p>
+        <p style="font-size: 14px; color: #888; line-height: 1.6;">Minimal, elegant, sophisticated. Muted tones, clean typography, refined. The visitor thinks: "This is where serious&nbsp;work&nbsp;happens."</p>
+      </div>
+    </div>
+    <p style="margin-top: 24px; font-size: 15px; color: #555;">Same co-working space. Two different audiences. Let's see what Claude&nbsp;builds.</p>
+  </div>
+
+  <!-- SLIDE 5: A/B Version A Prompt -->
+  <div class="slide">
+    <span class="tag tag-demo">Version A</span>
+    <h2><span class="accent">Gen Z Modern</span> / Product-Focused</h2>
+    <p style="font-size: 16px; color: #888; margin-bottom: 16px;">Bold, vibrant, playful. Leads with spaces, pricing, and what&nbsp;you&nbsp;get.</p>
+    <div class="code-block reveal-item" style="font-size: 12px; max-width: 900px; text-align: left; line-height: 1.8;">
+      <div class="code-header" style="font-size: 11px;">
+        <span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:#ff5f56;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:#ffbd2e;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:#27c93f;"></span>
+        &nbsp; Version A prompt
+      </div>
+      <span class="code-line"><span class="code-value">Build a complete landing page for "The Hive" a</span></span>
+      <span class="code-line"><span class="code-value">co-working space + cafe for women in Halifax.</span></span>
+      <span class="code-line"><span class="code-value">Use components from 21st.dev for modern UI elements.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Vibe:</span> <span class="code-value">Gen Z modern. Bold, vibrant, playful, energetic.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Hero:</span> <span class="code-value">Full-screen gradient background (neon green to</span></span>
+      <span class="code-line"><span class="code-value">coral to purple). Big bold headline: "Your new</span></span>
+      <span class="code-line"><span class="code-value">favorite place to get things done." Subline: "Wifi,</span></span>
+      <span class="code-line"><span class="code-value">coffee, community, zero judgment." Animated gradient</span></span>
+      <span class="code-line"><span class="code-value">text on the headline. CTA: "Grab a Desk" as a large</span></span>
+      <span class="code-line"><span class="code-value">rounded pill button with hover bounce animation.</span></span>
+      <span class="code-line"><span class="code-value">Add floating blob shapes in the background.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Spaces:</span> <span class="code-value">3 interactive cards that tilt on hover:</span></span>
+      <span class="code-line"><span class="code-value">Hot Desk ($15/day) with a laptop icon,</span></span>
+      <span class="code-line"><span class="code-value">Private Nook ($25/day) with a headphones icon,</span></span>
+      <span class="code-line"><span class="code-value">Meeting Room ($40/hr) with a group icon.</span></span>
+      <span class="code-line"><span class="code-value">Each card: different gradient border, playful</span></span>
+      <span class="code-line"><span class="code-value">description, "Book Now" micro-button.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Cafe:</span> <span class="code-value">"Fuel Your Flow" section. Horizontal scroll</span></span>
+      <span class="code-line"><span class="code-value">menu cards: oat latte $5, matcha bowl $7, avocado</span></span>
+      <span class="code-line"><span class="code-value">toast $9, pastry box $12. Each card has a colorful</span></span>
+      <span class="code-line"><span class="code-value">CSS gradient circle as food placeholder. Fun copy.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Community:</span> <span class="code-value">"Who Works Here" with a masonry grid of</span></span>
+      <span class="code-line"><span class="code-value">member cards (avatar circle, name, "Freelance</span></span>
+      <span class="code-line"><span class="code-value">Designer" tag). "Upcoming Events" ticker strip.</span></span>
+      <span class="code-line"><span class="code-value">Instagram-style gallery section at the bottom.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Footer:</span> <span class="code-value">Newsletter signup with "Stay in the loop"</span></span>
+      <span class="code-line"><span class="code-value">and a fun email input with confetti on submit.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-key">Style: Neon green (#c8ff00) + coral (#ff6b6b) + purple</span></span>
+      <span class="code-line"><span class="code-key">(#c084fc) accents on white. Border-radius: 20px on</span></span>
+      <span class="code-line"><span class="code-key">everything. Casual, friendly copy. Smooth scroll.</span></span>
+      <span class="code-line"><span class="code-key">CSS animations on scroll. Think Notion meets a trendy</span></span>
+      <span class="code-line"><span class="code-key">cafe. Gen Z would screenshot this for their story.</span></span>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: A/B Version B Prompt -->
+  <div class="slide">
+    <span class="tag tag-demo">Version B</span>
+    <h2><span class="accent-coral">Professional Chic</span> / Emotion-Focused</h2>
+    <p style="font-size: 16px; color: #888; margin-bottom: 16px;">Minimal, elegant, sophisticated. Leads with community, belonging, and&nbsp;transformation.</p>
+    <div class="code-block reveal-item" style="font-size: 12px; max-width: 900px; text-align: left; line-height: 1.8;">
+      <div class="code-header" style="font-size: 11px;">
+        <span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:#ff5f56;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:#ffbd2e;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:#27c93f;"></span>
+        &nbsp; Version B prompt
+      </div>
+      <span class="code-line"><span class="code-value">Build a complete landing page for "The Hive" a</span></span>
+      <span class="code-line"><span class="code-value">co-working space + cafe for women in Halifax.</span></span>
+      <span class="code-line"><span class="code-value">Use components from 21st.dev for refined UI elements.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Vibe:</span> <span class="code-value">Professional, minimal, classy, chic, sophisticated.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Hero:</span> <span class="code-value">Clean, airy layout. Elegant serif headline:</span></span>
+      <span class="code-line"><span class="code-value">"A workspace designed for women who build."</span></span>
+      <span class="code-line"><span class="code-value">Subline in light sans-serif: "Where ambition meets</span></span>
+      <span class="code-line"><span class="code-value">intention." Subtle cream background with a thin</span></span>
+      <span class="code-line"><span class="code-value">gold line accent. CTA: "Reserve Your Space" as an</span></span>
+      <span class="code-line"><span class="code-value">outlined button with gold border and subtle fill on</span></span>
+      <span class="code-line"><span class="code-value">hover. Lots of breathing room. No visual clutter.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Spaces:</span> <span class="code-value">3 membership tiers in an elegant table layout:</span></span>
+      <span class="code-line"><span class="code-value">Day Pass ($15/day) for drop-ins,</span></span>
+      <span class="code-line"><span class="code-value">Studio Membership ($249/mo) with dedicated desk,</span></span>
+      <span class="code-line"><span class="code-value">Private Office ($599/mo) for teams.</span></span>
+      <span class="code-line"><span class="code-value">Feature comparison with checkmarks. Thin divider</span></span>
+      <span class="code-line"><span class="code-value">lines. "Studio" highlighted as "Most Popular" with</span></span>
+      <span class="code-line"><span class="code-value">a subtle gold badge. Clean, no visual noise.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Cafe:</span> <span class="code-value">"The Kitchen" with a curated, editorial-style</span></span>
+      <span class="code-line"><span class="code-value">menu. Categories: Morning (single origin espresso,</span></span>
+      <span class="code-line"><span class="code-value">cortado, matcha ceremony), Midday (seasonal bowls,</span></span>
+      <span class="code-line"><span class="code-value">artisan sandwiches), Sweet (organic pastries, dark</span></span>
+      <span class="code-line"><span class="code-value">chocolate). Minimal layout, prices right-aligned.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Members:</span> <span class="code-value">"Our Community" section with a clean grid of</span></span>
+      <span class="code-line"><span class="code-value">member profiles: professional placeholder photo,</span></span>
+      <span class="code-line"><span class="code-value">name, company, one-line role. Below that, a large</span></span>
+      <span class="code-line"><span class="code-value">testimonial quote in serif italic with attribution.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Footer:</span> <span class="code-value">"Join our mailing list" with a single elegant</span></span>
+      <span class="code-line"><span class="code-value">email input, gold submit button. Address, hours,</span></span>
+      <span class="code-line"><span class="code-value">social links in a minimal three-column layout.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-subheading">Images:</span> <span class="code-value">Use real stock photos from Unsplash throughout.</span></span>
+      <span class="code-line"><span class="code-value">Hero: women working in a beautiful bright space.</span></span>
+      <span class="code-line"><span class="code-value">Cafe: overhead shot of coffee and laptop on marble.</span></span>
+      <span class="code-line"><span class="code-value">Community: candid photos of women collaborating.</span></span>
+      <span class="code-line"><span class="code-value">Use direct Unsplash image URLs, not placeholders.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-key">Style: Cream (#faf8f5) + charcoal (#2a2a2a) + muted</span></span>
+      <span class="code-line"><span class="code-key">gold (#c5a55a). Serif headings (Playfair Display or</span></span>
+      <span class="code-line"><span class="code-key">similar), sans-serif body. Generous whitespace.</span></span>
+      <span class="code-line"><span class="code-key">Subtle fade-in animations on scroll. Think Aesop,</span></span>
+      <span class="code-line"><span class="code-key">The Wing, or a high-end boutique hotel website.</span></span>
+      <span class="code-line"><span class="code-key">Sophisticated, not corporate.</span></span>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Agentic Research -->
+  <div class="slide">
+    <span class="tag tag-demo">The big one</span>
+    <h2><span class="accent">Agentic</span> Research</h2>
+    <p style="font-size: 17px; color: #888; margin-bottom: 20px;">Claude doesn't just write code. It can research, analyze, and build from what it learns.&nbsp;Watch.</p>
+    <div class="code-block reveal-item" style="font-size: 13px; max-width: 900px; text-align: left; line-height: 1.9;">
+      <div class="code-header">
+        <span style="width:12px;height:12px;border-radius:50%;display:inline-block;background:#ff5f56;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;display:inline-block;background:#ffbd2e;"></span>
+        <span style="width:12px;height:12px;border-radius:50%;display:inline-block;background:#27c93f;"></span>
+        &nbsp; Paste into Claude Code
+      </div>
+      <span class="code-line"><span class="code-value">Research co-working spaces in Halifax that cater</span></span>
+      <span class="code-line"><span class="code-value">to women or have a community focus. Look at their</span></span>
+      <span class="code-line"><span class="code-value">websites, pricing, and positioning. Then create a</span></span>
+      <span class="code-line"><span class="code-value">competitive analysis page for The Hive that shows</span></span>
+      <span class="code-line"><span class="code-value">how we're different. Include a comparison table</span></span>
+      <span class="code-line"><span class="code-value">and a "Why The Hive" section with specific</span></span>
+      <span class="code-line"><span class="code-value">differentiators based on the research.</span></span>
+    </div>
+    <p style="margin-top: 20px; font-size: 15px; color: #888;">Market research + a built page. From one prompt. Think about what this means for&nbsp;your&nbsp;business.</p>
+  </div>
+
+  <!-- SLIDE 8: Agentic Workflow -->
+  <div class="slide">
+    <span class="tag tag-tool">This is the future</span>
+    <h2><span class="accent">Agentic</span> Workflow</h2>
+    <p style="font-size: 17px; color: #888; margin-bottom: 20px;">Claude doesn't just follow instructions. It researches, makes decisions based on what it finds, and builds accordingly. Watch it think&nbsp;for&nbsp;itself.</p>
+    <div class="code-block reveal-item" style="font-size: 12px; max-width: 900px; text-align: left; line-height: 1.8;">
+      <div class="code-header" style="font-size: 11px;">
+        <span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:#ff5f56;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:#ffbd2e;"></span>
+        <span style="width:10px;height:10px;border-radius:50%;display:inline-block;background:#27c93f;"></span>
+        &nbsp; Paste into Claude Code
+      </div>
+      <span class="code-line"><span class="code-value">I'm launching The Hive, a co-working space + cafe</span></span>
+      <span class="code-line"><span class="code-value">for women in Halifax. I need a launch strategy.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-value">Here's what I want you to do autonomously:</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-value">First, research co-working spaces in Halifax and</span></span>
+      <span class="code-line"><span class="code-value">women-focused workspaces across Canada. Analyze</span></span>
+      <span class="code-line"><span class="code-value">what messaging, pricing, and positioning works.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-value">Based on what you find, decide on the best angle</span></span>
+      <span class="code-line"><span class="code-value">for our launch and then:</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">Build a "Coming Soon" landing page with email</span></span>
+      <span class="code-line"><span class="code-value">  waitlist signup. The headline, copy, and design</span></span>
+      <span class="code-line"><span class="code-value">  should reflect your research findings.</span></span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">Write a 3-email launch sequence tailored to the</span></span>
+      <span class="code-line"><span class="code-value">  audience you identified. Full HTML templates.</span></span>
+      <span class="code-line"><span class="code-bullet">-</span> <span class="code-value">Create 5 Instagram captions for launch week that</span></span>
+      <span class="code-line"><span class="code-value">  match the positioning you chose.</span></span>
+      <span class="code-line">&nbsp;</span>
+      <span class="code-line"><span class="code-key">I want you to make the strategic decisions based</span></span>
+      <span class="code-line"><span class="code-key">on the research. Don't ask me what to do. Research,</span></span>
+      <span class="code-line"><span class="code-key">decide, build. Show me the reasoning at the end.</span></span>
+    </div>
+    <p style="margin-top: 16px; font-size: 15px; color: #888;">Claude researches autonomously, makes strategic decisions, and builds everything based on what it&nbsp;learned. That's&nbsp;agentic.</p>
+  </div>
+
+  <!-- SLIDE 10: Build Time -->
+  <div class="slide">
+    <span class="tag tag-action">Go time</span>
+    <div class="big-number" style="font-size: clamp(50px, 7vw, 80px);">Build Time</div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav">
+  <button onclick="prev()" aria-label="Previous">&larr;</button>
+  <button onclick="next()" aria-label="Next">&rarr;</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+
+  function go(n) {
+    if (n < 0 || n >= slides.length) return;
+    slides[current].classList.remove('active');
+    slides[current].classList.add('exit');
+
+    const prev = current;
+    current = n;
+
+    slides[current].classList.remove('exit');
+    slides[current].classList.add('active');
+
+    setTimeout(() => slides[prev].classList.remove('exit'), 500);
+
+    document.getElementById('progress').style.width = ((current + 1) / slides.length * 100) + '%';
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+
+    const items = slides[current].querySelectorAll('.reveal-item');
+    items.forEach((el, i) => {
+      el.classList.remove('visible');
+      setTimeout(() => el.classList.add('visible'), 200 + i * 150);
+    });
+  }
+
+  function next() { go(current + 1); }
+  function prev() { go(current - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  });
+
+  document.getElementById('progress').style.width = (1 / slides.length * 100) + '%';
+  document.getElementById('counter').textContent = '1 / ' + slides.length;
+
+  const firstItems = slides[0].querySelectorAll('.reveal-item');
+  firstItems.forEach((el, i) => setTimeout(() => el.classList.add('visible'), 300 + i * 150));
+</script>
+
+</body>
+</html>
