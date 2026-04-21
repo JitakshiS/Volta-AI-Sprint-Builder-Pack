@@ -5,77 +5,157 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Volta AI Sprint — Hub</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; padding: 48px 20px 80px; }
-  .container { max-width: 720px; margin: 0 auto; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    min-height: 100vh;
+    padding: 56px 20px 80px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+  }
+  .container { max-width: 680px; margin: 0 auto; }
 
-  .header { text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid #222; }
-  .header .tag { display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; padding: 6px 16px; border-radius: 100px; background: #c8ff00; color: #0a0a0a; margin-bottom: 20px; }
-  .header h1 { font-size: clamp(36px, 6vw, 52px); font-weight: 900; letter-spacing: -2px; line-height: 1.1; margin-bottom: 14px; }
-  .header p { font-size: 17px; color: #888; line-height: 1.6; max-width: 540px; margin: 0 auto; }
-  .accent { color: #c8ff00; }
+  .header { text-align: center; margin-bottom: 56px; padding-bottom: 40px; border-bottom: 1px solid #1a1a1a; }
+  .header .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 3.5px;
+    padding: 7px 18px;
+    border-radius: 100px;
+    background: #c8ff00;
+    color: #0a0a0a;
+    margin-bottom: 28px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .header h1 {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(44px, 7vw, 64px);
+    font-weight: 400;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .header h1 .accent { color: #c8ff00; font-style: italic; }
+  .header p {
+    font-size: 17px;
+    color: #888;
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto;
+    font-weight: 400;
+  }
 
-  .section-label { font-size: 12px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 14px; margin-top: 32px; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    margin-top: 40px;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, #2a2a2a 0%, transparent 100%);
+  }
 
   .card-link {
     display: block;
-    background: #141414;
-    border: 1px solid #2a2a2a;
-    border-radius: 16px;
-    padding: 24px 28px;
+    background: linear-gradient(180deg, #161616 0%, #121212 100%);
+    border: 1px solid #242424;
+    border-radius: 20px;
+    padding: 28px 32px;
     margin-bottom: 14px;
     text-decoration: none;
     color: #fff;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.02);
+  }
+  .card-link::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
   }
   .card-link:hover {
-    border-color: #c8ff00;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(200,255,0,0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04);
   }
+
   .card-link::after {
     content: '→';
     position: absolute;
-    right: 28px;
+    right: 32px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 22px;
-    color: #444;
-    transition: all 0.2s;
+    font-size: 24px;
+    color: #3a3a3a;
+    transition: all 0.3s ease;
+    font-weight: 300;
   }
   .card-link:hover::after {
+    transform: translateY(-50%) translateX(6px);
     color: #c8ff00;
-    transform: translateY(-50%) translateX(4px);
   }
 
   .card-link .card-title {
-    font-size: 18px;
-    font-weight: 800;
-    margin-bottom: 4px;
-    letter-spacing: -0.3px;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    color: #fff;
   }
   .card-link .card-desc {
     font-size: 14px;
     color: #888;
-    line-height: 1.5;
-    padding-right: 40px;
+    line-height: 1.65;
+    padding-right: 48px;
+    font-weight: 400;
   }
 
-  .card-link.accent-lime { border-left: 3px solid #c8ff00; }
-  .card-link.accent-coral { border-left: 3px solid #ff6b6b; }
-  .card-link.accent-blue { border-left: 3px solid #6bc5ff; }
-  .card-link.accent-purple { border-left: 3px solid #c084fc; }
+  /* Accent variants with subtle glow */
+  .card-link.accent-lime { border-top: 1px solid #c8ff0044; }
+  .card-link.accent-lime:hover { box-shadow: 0 16px 48px rgba(200,255,0,0.08), inset 0 1px 0 rgba(200,255,0,0.08); border-color: #c8ff0044; }
 
-  .footer { text-align: center; margin-top: 56px; padding-top: 32px; border-top: 1px solid #222; }
-  .footer p { font-size: 14px; color: #555; line-height: 1.7; }
+  .card-link.accent-coral { border-top: 1px solid #ff6b6b44; }
+  .card-link.accent-coral:hover { box-shadow: 0 16px 48px rgba(255,107,107,0.08), inset 0 1px 0 rgba(255,107,107,0.08); border-color: #ff6b6b44; }
+  .card-link.accent-coral:hover::after { color: #ff6b6b; }
+
+  .card-link.accent-blue { border-top: 1px solid #6bc5ff44; }
+  .card-link.accent-blue:hover { box-shadow: 0 16px 48px rgba(107,197,255,0.08), inset 0 1px 0 rgba(107,197,255,0.08); border-color: #6bc5ff44; }
+  .card-link.accent-blue:hover::after { color: #6bc5ff; }
+
+  .card-link.accent-purple { border-top: 1px solid #c084fc44; }
+  .card-link.accent-purple:hover { box-shadow: 0 16px 48px rgba(192,132,252,0.08), inset 0 1px 0 rgba(192,132,252,0.08); border-color: #c084fc44; }
+  .card-link.accent-purple:hover::after { color: #c084fc; }
+
+  .footer { text-align: center; margin-top: 72px; padding-top: 36px; border-top: 1px solid #1a1a1a; }
+  .footer p { font-size: 13px; color: #555; line-height: 1.8; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
+  .footer .divider { color: #333; margin: 0 8px; }
 
   @media (max-width: 500px) {
-    body { padding: 32px 16px 60px; }
-    .card-link { padding: 20px 24px; }
-    .card-link::after { right: 20px; }
+    body { padding: 40px 16px 60px; }
+    .card-link { padding: 24px 26px; }
+    .card-link::after { right: 22px; font-size: 20px; }
+    .card-link .card-desc { padding-right: 36px; }
+    .header h1 { font-size: 38px; }
   }
 </style>
 </head>
@@ -84,38 +164,38 @@
 
   <div class="header">
     <div class="tag">Volta AI Sprint</div>
-    <h1>Your <span class="accent">Sprint</span> Hub</h1>
-    <p>Everything you need from the 4-week sprint in one place. Bookmark this page, use the tools, and keep building&nbsp;after&nbsp;the&nbsp;sprint.</p>
+    <h1>Your <span class="accent">sprint</span> hub.</h1>
+    <p>Everything you need from the 4-week sprint, in one place. Bookmark this page, use the tools, and keep building after&nbsp;the&nbsp;sprint.</p>
   </div>
 
   <div class="section-label">Build tools</div>
 
   <a href="/toolkit" class="card-link accent-lime">
     <div class="card-title">Sprint Toolkit</div>
-    <div class="card-desc">Your Build Journal and First Prompts library. Plan your project, generate a CLAUDE.md, and copy prompts you can use anytime.</div>
+    <div class="card-desc">Your Build Journal and First Prompts library. Plan your project, generate a CLAUDE.md, and copy prompts you can&nbsp;use&nbsp;anytime.</div>
   </a>
 
   <a href="/demo-prep" class="card-link accent-blue">
     <div class="card-title">Demo Day Prep</div>
-    <div class="card-desc">Craft your 2-minute pitch in 7 guided sections. Includes a script generator and practice timer.</div>
+    <div class="card-desc">Craft your 2-minute pitch in 7 guided sections. Includes a script generator and&nbsp;practice&nbsp;timer.</div>
   </a>
 
   <div class="section-label">Presentations</div>
 
   <a href="/session-3" class="card-link accent-purple">
     <div class="card-title">Session 3 Slides</div>
-    <div class="card-desc">Power Tour: CLAUDE.md updates, Skills, A/B testing, agentic workflows, and what's possible with Claude Code.</div>
+    <div class="card-desc">Power Tour: CLAUDE.md updates, Skills, A/B testing, agentic workflows, and what's possible&nbsp;with&nbsp;Claude&nbsp;Code.</div>
   </a>
 
   <div class="section-label">Wrap up</div>
 
   <a href="/feedback" class="card-link accent-coral">
     <div class="card-title">Sprint Wrap-Up</div>
-    <div class="card-desc">Share your feedback, your journey, and help me make the next sprint even better. Takes 2 minutes.</div>
+    <div class="card-desc">Share your feedback, your journey, and help me make the next sprint even better. Takes&nbsp;2&nbsp;minutes.</div>
   </a>
 
   <div class="footer">
-    <p>Volta AI Build Sprint . April 2026<br>Facilitated by Jitsy . Atlantic Canada Claude Ambassador</p>
+    <p>Volta AI Build Sprint <span class="divider">·</span> April 2026<br>Facilitated by Jitakshi <span class="divider">·</span> Atlantic Canada Claude Ambassador</p>
   </div>
 
 </div>
