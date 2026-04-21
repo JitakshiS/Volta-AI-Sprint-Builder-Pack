@@ -155,21 +155,21 @@
       <div class="card-header">
         <span class="card-num n1">01 / Your Journey</span>
         <h3>Where were you, and where are you now?</h3>
-        <p class="hint">Drag each slider to show how ready you felt&nbsp;and&nbsp;feel</p>
+        <p class="hint">Pick the skill level that matches you best, before the sprint&nbsp;and&nbsp;today</p>
       </div>
       <div class="journey-group">
         <div class="journey-label">Before the sprint</div>
         <div class="energy-slider">
           <input type="range" min="0" max="100" value="20" id="before" oninput="updateJourney(this.value, 'before-label')">
         </div>
-        <div class="energy-value" id="before-label">Getting my feet wet</div>
+        <div class="energy-value" id="before-label">Tried Lovable or other no-code tools</div>
       </div>
       <div class="journey-group" style="margin-top: 20px;">
         <div class="journey-label">Right now</div>
         <div class="energy-slider">
-          <input type="range" min="0" max="100" value="75" id="after" oninput="updateJourney(this.value, 'after-label')">
+          <input type="range" min="0" max="100" value="65" id="after" oninput="updateJourney(this.value, 'after-label')">
         </div>
-        <div class="energy-value" id="after-label">Feeling it</div>
+        <div class="energy-value" id="after-label">Can connect real services (APIs, databases)</div>
       </div>
     </div>
 
@@ -261,13 +261,14 @@
 </div>
 
 <script>
-  // Journey labels
+  // Journey labels with concrete skill markers
   const journeyLabels = [
-    { max: 15, text: 'Barely started' },
-    { max: 35, text: 'Getting my feet wet' },
-    { max: 60, text: 'Getting the hang of it' },
-    { max: 85, text: 'Feeling it' },
-    { max: 100, text: 'Builder for life' }
+    { max: 15, text: 'Just using ChatGPT or other AI chats' },
+    { max: 35, text: 'Tried Lovable or other no-code tools' },
+    { max: 55, text: 'Comfortable prompting Claude Code' },
+    { max: 75, text: 'Can connect real services (APIs, databases)' },
+    { max: 90, text: 'Can deploy and iterate on live apps' },
+    { max: 100, text: 'Building and shipping independently' }
   ];
 
   function updateJourney(val, labelId) {
