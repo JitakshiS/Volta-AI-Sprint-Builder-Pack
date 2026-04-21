@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volta AI Sprint / Sprint Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#fff;line-height:1.6;-webkit-font-smoothing:antialiased}
+p{text-wrap:pretty}
+h1,h2,h3,h4,h5,h6{text-wrap:balance}
+.container{max-width:720px;margin:0 auto;padding:0 20px}
+
+/* Header */
+.header{padding:48px 0 32px;text-align:center}
+.tag-pill{display:inline-block;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:13px;padding:6px 16px;border-radius:100px;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}
+.header h1{font-size:clamp(32px,6vw,48px);font-weight:800;margin-bottom:12px}
+.header h1 .accent{color:#c8ff00}
+.header .subtitle{color:#888;font-size:16px;max-width:480px;margin:0 auto}
+
+/* Tab Bar */
+.tab-bar{position:sticky;top:0;z-index:50;background:#0a0a0a;padding:16px 0;display:flex;gap:8px;justify-content:center;border-bottom:1px solid #1a1a1a}
+.tab-btn{font-family:'Inter',sans-serif;font-size:15px;font-weight:600;padding:10px 28px;border-radius:100px;border:1px solid #333;background:#1a1a1a;color:#888;cursor:pointer;transition:all 0.2s}
+.tab-btn:hover{border-color:#555;color:#aaa}
+.tab-btn.active{background:#c8ff00;color:#0a0a0a;border-color:#c8ff00}
+
+/* Tab Content */
+.tab-content{display:none;padding:32px 0 64px}
+.tab-content.active{display:block}
+
+/* Sections */
+.section{margin-bottom:48px}
+.section-title{font-size:22px;font-weight:700;margin-bottom:8px}
+.section-subtitle{color:#888;font-size:14px;margin-bottom:24px}
+.section-number{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#c8ff00;color:#0a0a0a;font-weight:700;font-size:13px;margin-right:10px;flex-shrink:0}
+
+/* Cards */
+.card{background:#141414;border:1px solid #2a2a2a;border-radius:16px;padding:24px;margin-bottom:16px}
+.card-sm{padding:16px}
+
+/* Form Elements */
+label.field-label{display:block;font-weight:600;font-size:14px;margin-bottom:6px;color:#fff}
+.hint{display:block;font-size:13px;color:#555;margin-bottom:6px}
+input[type="text"],textarea{width:100%;font-family:'Inter',sans-serif;font-size:14px;background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:10px 14px;color:#fff;outline:none;transition:border-color 0.2s;resize:vertical}
+input[type="text"]:focus,textarea:focus{border-color:#c8ff00}
+input.short{max-width:320px}
+textarea{min-height:52px}
+.field-group{margin-bottom:20px}
+
+/* Feature Items */
+.feature-item{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.feature-num{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-weight:700;font-size:12px;flex-shrink:0}
+.feature-num.green{background:#c8ff00;color:#0a0a0a}
+.feature-num.grey{background:#333;color:#888;font-size:16px;line-height:1}
+.feature-item input{flex:1}
+
+/* Vibe Pills */
+.vibe-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.vibe-pill{font-family:'Inter',sans-serif;font-size:14px;font-weight:500;padding:8px 20px;border-radius:100px;border:1px solid #333;background:#1a1a1a;color:#888;cursor:pointer;transition:all 0.2s;user-select:none}
+.vibe-pill:hover{border-color:#555;color:#aaa}
+.vibe-pill.selected{background:#c8ff00;color:#0a0a0a;border-color:#c8ff00;font-weight:600}
+
+/* Service Grid */
+.services-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.service-card{background:#111;border:1px solid #2a2a2a;border-radius:10px;padding:14px 16px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;user-select:none}
+.service-card:hover{border-color:#444}
+.service-card.checked{border-color:#c8ff00;background:#141414}
+.service-card input[type="checkbox"]{display:none}
+.service-check{width:18px;height:18px;border:2px solid #444;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.service-card.checked .service-check{background:#c8ff00;border-color:#c8ff00}
+.service-card.checked .service-check::after{content:'\2713';color:#0a0a0a;font-size:12px;font-weight:700}
+.service-info .service-name{font-weight:600;font-size:14px}
+.service-info .service-tool{font-size:12px;color:#555}
+
+/* Generate Button */
+.btn-generate{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;padding:14px 32px;border-radius:10px;border:none;background:#c8ff00;color:#0a0a0a;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-generate:hover{background:#b8ef00;transform:translateY(-1px)}
+
+/* Output */
+.output-area{display:none;margin-top:20px}
+.output-area.visible{display:block}
+.output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.output-header span{font-weight:600;font-size:14px;color:#888}
+.code-block{background:#111;border:1px solid #2a2a2a;border-radius:12px;padding:20px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#ccc;white-space:pre-wrap;word-break:break-word;max-height:500px;overflow-y:auto}
+
+/* Copy Button */
+.btn-copy{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:6px;border:1px solid #333;background:#1a1a1a;color:#888;cursor:pointer;transition:all 0.2s}
+.btn-copy:hover{border-color:#555;color:#aaa}
+.btn-copy.copied{background:#27c93f;color:#fff;border-color:#27c93f}
+
+/* Week Grid */
+.week-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.week-card{border-radius:12px;padding:16px}
+.week-card.w1{background:#141414;border:1px solid #2a3a1a}
+.week-card.w2{background:#141414;border:1px solid #1a2a3a}
+.week-card.w3{background:#141414;border:1px solid #2a1a3a}
+.week-card.w4{background:#1a1414;border:1px solid #3a1a1a}
+.week-label{font-weight:700;font-size:13px;margin-bottom:8px}
+.week-card.w1 .week-label{color:#c8ff00}
+.week-card.w2 .week-label{color:#6bc5ff}
+.week-card.w3 .week-label{color:#c084fc}
+.week-card.w4 .week-label{color:#ff6b6b}
+.week-card textarea{min-height:64px;font-size:13px}
+
+/* Demo Script */
+.demo-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px}
+.demo-label{font-weight:600;font-size:13px;color:#888;min-width:56px;padding-top:10px;flex-shrink:0}
+.demo-row input,.demo-row textarea{flex:1}
+
+/* Reflection Cards */
+.reflection-card{background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:12px}
+.reflection-card .reflection-prompt{font-weight:600;font-size:15px;margin-bottom:10px;color:#ccc}
+
+/* Prompts Tab */
+.tip-box{background:#141414;border-left:3px solid #c8ff00;border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:32px;font-size:14px;color:#ccc}
+.tip-box strong{color:#c8ff00}
+
+.phase-section{margin-bottom:40px}
+.phase-tag{display:inline-block;font-size:12px;font-weight:700;padding:4px 12px;border-radius:6px;margin-bottom:16px;letter-spacing:0.5px;text-transform:uppercase}
+.phase-tag.green{background:rgba(200,255,0,0.12);color:#c8ff00}
+.phase-tag.blue{background:rgba(107,197,255,0.12);color:#6bc5ff}
+.phase-tag.purple{background:rgba(192,132,252,0.12);color:#c084fc}
+.phase-tag.coral{background:rgba(255,107,107,0.12);color:#ff6b6b}
+.phase-title{font-size:20px;font-weight:700;margin-bottom:16px}
+
+.prompt-card{background:#141414;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin-bottom:12px}
+.prompt-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.prompt-label{font-weight:600;font-size:14px;color:#888}
+.prompt-body{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:#ccc;background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:14px 16px}
+.prompt-body .placeholder{color:#c8ff00;font-weight:700}
+
+/* Emergency */
+.emergency-section{margin-top:40px}
+.emergency-title{font-size:20px;font-weight:700;margin-bottom:16px;color:#ff6b6b}
+.emergency-card{background:#141414;border-left:3px solid #ff6b6b;border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:12px;font-size:14px;color:#ccc}
+.emergency-card strong{color:#fff}
+.cmd{font-family:'JetBrains Mono',monospace;color:#c8ff00;font-weight:500}
+
+/* Footer */
+.footer{text-align:center;padding:48px 0 32px;color:#555;font-size:13px;border-top:1px solid #1a1a1a}
+
+/* Responsive */
+@media(max-width:500px){
+  .services-grid,.week-grid{grid-template-columns:1fr}
+  .demo-row{flex-direction:column;gap:4px}
+  .demo-label{padding-top:0}
+  .tab-btn{padding:8px 20px;font-size:14px}
+  .header h1{font-size:28px}
+  .prompt-card-header{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="tag-pill">Volta AI Sprint</div>
+    <h1>Sprint <span class="accent">Toolkit</span></h1>
+    <p class="subtitle">Your companion for building with Claude Code. One link, everything&nbsp;you&nbsp;need.</p>
+  </header>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('journal')">Build Journal</button>
+    <button class="tab-btn" onclick="switchTab('prompts')">First Prompts</button>
+  </div>
+
+  <!-- ==================== TAB 1: BUILD JOURNAL ==================== -->
+  <div id="tab-journal" class="tab-content active">
+
+    <!-- Section 1: The Idea -->
+    <div class="section">
+      <h2 class="section-title"><span class="section-number">1</span>The Idea</h2>
+      <div class="card">
+        <div class="field-group">
+          <label class="field-label" for="project-name">Project Name</label>
+          <input type="text" id="project-name" class="short" placeholder="e.g. ZenBook Yoga">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="what-building">What are you building?</label>
+          <textarea id="what-building" rows="2" placeholder="e.g. An online booking platform for a yoga studio in Halifax where clients can browse classes, book sessions, and pay online."></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="who-for">Who is it for?</label>
+          <span class="hint">Describe one real person who would use this.</span>
+          <textarea id="who-for" rows="2" placeholder="e.g. Sarah, 32, runs a yoga studio and currently takes bookings through Instagram DMs."></textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="problem">What problem does it solve?</label>
+          <textarea id="problem" rows="2" placeholder=""></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Features -->
+    <div class="section">
+      <h2 class="section-title"><span class="section-number">2</span>Features</h2>
+      <div class="card">
+        <label class="field-label">Must-Have Features</label>
+        <div style="margin-bottom:16px">
+          <div class="feature-item"><span class="feature-num green">1</span><input type="text" id="feature-1" placeholder=""></div>
+          <div class="feature-item"><span class="feature-num green">2</span><input type="text" id="feature-2" placeholder=""></div>
+          <div class="feature-item"><span class="feature-num green">3</span><input type="text" id="feature-3" placeholder=""></div>
+          <div class="feature-item"><span class="feature-num green">4</span><input type="text" id="feature-4" placeholder=""></div>
+          <div class="feature-item"><span class="feature-num green">5</span><input type="text" id="feature-5" placeholder=""></div>
+        </div>
+        <label class="field-label">Nice-to-Have</label>
+        <div>
+          <div class="feature-item"><span class="feature-num grey">+</span><input type="text" id="nice-1" placeholder=""></div>
+          <div class="feature-item"><span class="feature-num grey">+</span><input type="text" id="nice-2" placeholder=""></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Design + Services -->
+    <div class="section">
+      <h2 class="section-title"><span class="section-number">3</span>Design + Services</h2>
+      <div class="card">
+        <div class="field-group">
+          <label class="field-label">Design Vibe</label>
+          <div class="vibe-pills">
+            <div class="vibe-pill" onclick="toggleVibe(this)">Modern</div>
+            <div class="vibe-pill" onclick="toggleVibe(this)">Minimal</div>
+            <div class="vibe-pill" onclick="toggleVibe(this)">Playful</div>
+            <div class="vibe-pill" onclick="toggleVibe(this)">Bold</div>
+            <div class="vibe-pill" onclick="toggleVibe(this)">Corporate</div>
+            <div class="vibe-pill" onclick="toggleVibe(this)">Warm</div>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="colors">Colors</label>
+          <input type="text" id="colors" placeholder="e.g. Navy blue, white, gold accents">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="reference">Reference Site</label>
+          <span class="hint">Any website whose look you like</span>
+          <input type="text" id="reference" placeholder="e.g. https://example.com">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Services</label>
+          <div class="services-grid">
+            <div class="service-card" onclick="toggleService(this)">
+              <input type="checkbox" data-service="Supabase">
+              <div class="service-check"></div>
+              <div class="service-info"><div class="service-name">Database</div><div class="service-tool">Supabase</div></div>
+            </div>
+            <div class="service-card" onclick="toggleService(this)">
+              <input type="checkbox" data-service="Stripe">
+              <div class="service-check"></div>
+              <div class="service-info"><div class="service-name">Payments</div><div class="service-tool">Stripe</div></div>
+            </div>
+            <div class="service-card" onclick="toggleService(this)">
+              <input type="checkbox" data-service="Auth">
+              <div class="service-check"></div>
+              <div class="service-info"><div class="service-name">User Login</div><div class="service-tool">Auth</div></div>
+            </div>
+            <div class="service-card" onclick="toggleService(this)">
+              <input type="checkbox" data-service="SendGrid">
+              <div class="service-check"></div>
+              <div class="service-info"><div class="service-name">Email</div><div class="service-tool">SendGrid</div></div>
+            </div>
+            <div class="service-card" onclick="toggleService(this)">
+              <input type="checkbox" data-service="Google Maps">
+              <div class="service-check"></div>
+              <div class="service-info"><div class="service-name">Maps</div><div class="service-tool">Google Maps</div></div>
+            </div>
+            <div class="service-card" onclick="toggleService(this)">
+              <input type="checkbox" data-service="File Upload">
+              <div class="service-check"></div>
+              <div class="service-info"><div class="service-name">File Upload</div><div class="service-tool">Images + docs</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Generate CLAUDE.md -->
+    <div class="section">
+      <h2 class="section-title"><span class="section-number">4</span>Generate Your CLAUDE.md</h2>
+      <div class="card">
+        <p style="color:#888;font-size:14px;margin-bottom:16px">Click the button below to turn everything you filled in above into a CLAUDE.md file. Paste it into your project and Claude will remember your&nbsp;project&nbsp;context.</p>
+        <button class="btn-generate" onclick="generateClaudeMd()">Generate CLAUDE.md</button>
+        <div id="output-area" class="output-area">
+          <div class="output-header">
+            <span>CLAUDE.md</span>
+            <button class="btn-copy" onclick="copyOutput(this)">Copy</button>
+          </div>
+          <div id="claude-output" class="code-block"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Weekly Snapshots -->
+    <div class="section">
+      <h2 class="section-title"><span class="section-number">5</span>Weekly Snapshots</h2>
+      <p class="section-subtitle">Drop a screenshot or write a quick note at the end of each session. Takes 10&nbsp;seconds.</p>
+      <div class="week-grid">
+        <div class="week-card w1">
+          <div class="week-label">Week 1</div>
+          <textarea id="week-1" rows="3" placeholder="What did you build?"></textarea>
+        </div>
+        <div class="week-card w2">
+          <div class="week-label">Week 2</div>
+          <textarea id="week-2" rows="3" placeholder="What did you build?"></textarea>
+        </div>
+        <div class="week-card w3">
+          <div class="week-label">Week 3</div>
+          <textarea id="week-3" rows="3" placeholder="What did you build?"></textarea>
+        </div>
+        <div class="week-card w4">
+          <div class="week-label">Week 4</div>
+          <textarea id="week-4" rows="3" placeholder="What did you build?"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 6: Demo Script -->
+    <div class="section">
+      <h2 class="section-title"><span class="section-number">6</span>My Demo Script</h2>
+      <div class="card">
+        <div class="demo-row"><div class="demo-label">What</div><textarea id="demo-what" rows="2" placeholder="What does your app do in one sentence?"></textarea></div>
+        <div class="demo-row"><div class="demo-label">Why</div><textarea id="demo-why" rows="2" placeholder="Why does this matter?"></textarea></div>
+        <div class="demo-row"><div class="demo-label">Show 1</div><input type="text" id="demo-show1" placeholder="First thing you'll demo"></div>
+        <div class="demo-row"><div class="demo-label">Show 2</div><input type="text" id="demo-show2" placeholder="Second thing you'll demo"></div>
+        <div class="demo-row"><div class="demo-label">Show 3</div><input type="text" id="demo-show3" placeholder="Third thing you'll demo"></div>
+        <div class="demo-row"><div class="demo-label">Next</div><input type="text" id="demo-next" placeholder="What would you build next?"></div>
+      </div>
+    </div>
+
+    <!-- Section 7: Reflections -->
+    <div class="section">
+      <h2 class="section-title"><span class="section-number">7</span>Reflections <span style="font-size:14px;font-weight:400;color:#555">(optional)</span></h2>
+      <div class="reflection-card">
+        <div class="reflection-prompt">What surprised me about this process</div>
+        <textarea id="reflect-1" rows="2" placeholder=""></textarea>
+      </div>
+      <div class="reflection-card">
+        <div class="reflection-prompt">What I would do differently next time</div>
+        <textarea id="reflect-2" rows="2" placeholder=""></textarea>
+      </div>
+      <div class="reflection-card">
+        <div class="reflection-prompt">What I am most proud of</div>
+        <textarea id="reflect-3" rows="2" placeholder=""></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== TAB 2: FIRST PROMPTS ==================== -->
+  <div id="tab-prompts" class="tab-content">
+
+    <!-- Tip Box -->
+    <div class="tip-box">
+      <strong>Pro tip:</strong> The more specific you are, the better Claude builds. "Add a form" is okay. "Add a booking form with name, email, date picker, and a dropdown for class type" is&nbsp;much&nbsp;better.
+    </div>
+
+    <!-- Phase: Getting Started -->
+    <div class="phase-section">
+      <div class="phase-tag green">Getting Started / Week 1</div>
+      <h3 class="phase-title">Getting Started</h3>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Your first prompt</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Create a <span class="placeholder">[type of app]</span> for <span class="placeholder">[business name]</span>. It should have a landing page with a hero section, a <span class="placeholder">[features/services]</span> section, and a contact form. Use a <span class="placeholder">[color]</span> and white color scheme with a <span class="placeholder">[modern/minimal/playful]</span> design.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Set up project rules</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">/init</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Add more pages</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Add an About page with our story, team photos placeholders, and our mission statement. Add navigation so users can go between the landing page and&nbsp;About&nbsp;page.</div>
+      </div>
+    </div>
+
+    <!-- Phase: Adding Features -->
+    <div class="phase-section">
+      <div class="phase-tag blue">Adding Features / Week 2</div>
+      <h3 class="phase-title">Adding Features</h3>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Booking / scheduling</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Add a booking form with fields for name, email, phone, a date picker, and a dropdown for <span class="placeholder">[service types, e.g. "yoga class, pilates, meditation"]</span>. When submitted, show a confirmation message with the booking&nbsp;details.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Pricing section</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Add a pricing section with 3 cards: <span class="placeholder">[Basic $X/mo, Pro $X/mo, Premium $X/mo]</span>. Each card should list 4-5 features. Add a "Most Popular" badge on the middle&nbsp;card.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">User accounts</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Add user authentication with Supabase Auth. Users should be able to sign up with email and password, log in, and see a dashboard after login. The dashboard should show&nbsp;<span class="placeholder">[their bookings / their orders / their profile]</span>.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Database connection</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Set up Supabase as the database. Create a table for <span class="placeholder">[bookings / products / users]</span> with columns for <span class="placeholder">[name, email, date, status]</span>. Connect the <span class="placeholder">[booking form]</span> so submissions save to&nbsp;the&nbsp;database.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Contact / email</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">The contact form doesn't send emails yet. Add EmailJS integration so form submissions go to <span class="placeholder">[your@email.com]</span>. Show a success message after&nbsp;sending.</div>
+      </div>
+    </div>
+
+    <!-- Phase: Polish + Fix -->
+    <div class="phase-section">
+      <div class="phase-tag purple">Polish + Fix / Week 3</div>
+      <h3 class="phase-title">Polish + Fix</h3>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Mobile responsive</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Make the entire site mobile-responsive. The navigation should collapse into a hamburger menu on small screens. All forms and cards should stack vertically&nbsp;on&nbsp;mobile.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Design consistency</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Audit the entire app for design consistency. Make fonts, colors, spacing, and button styles consistent across all pages. Fix any elements that look out of place or&nbsp;misaligned.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Replace placeholder text</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Replace all placeholder and lorem ipsum text with real copy for <span class="placeholder">[your business description]</span>. Make the headlines compelling and the descriptions clear for someone visiting&nbsp;for&nbsp;the&nbsp;first&nbsp;time.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Fix a bug</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">The <span class="placeholder">[specific thing]</span> is broken. When I click <span class="placeholder">[button/link]</span>, <span class="placeholder">[what happens]</span> instead of <span class="placeholder">[what should happen]</span>.&nbsp;Fix&nbsp;it.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Add finishing touches</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Add a favicon, update the page title to "<span class="placeholder">[Your App Name]</span>", and add meta description tags for SEO. Also add a footer with copyright, social media links, and&nbsp;contact&nbsp;info.</div>
+      </div>
+    </div>
+
+    <!-- Phase: Deploy -->
+    <div class="phase-section">
+      <div class="phase-tag coral">Deploy It Live / Week 4</div>
+      <h3 class="phase-title">Deploy It Live</h3>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Deploy to Vercel</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Help me deploy this project to Vercel. Walk me through each step. Make sure environment variables are configured correctly and the build&nbsp;succeeds.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Fix build errors</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">The deployment is failing with this error: <span class="placeholder">[paste the error message here]</span>. Fix the issue so the build&nbsp;succeeds.</div>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-card-header">
+          <span class="prompt-label">Final check</span>
+          <button class="btn-copy" onclick="copyPrompt(this)">Copy</button>
+        </div>
+        <div class="prompt-body">Do a final review of the entire app. Check for broken links, missing images, console errors, and any pages that don't look right. List everything that needs fixing and&nbsp;fix&nbsp;them.</div>
+      </div>
+    </div>
+
+    <!-- Emergency Section -->
+    <div class="emergency-section">
+      <h3 class="emergency-title">If Things Go Wrong</h3>
+
+      <div class="emergency-card">
+        <strong>Claude is confused or going in circles:</strong> Type <span class="cmd">/clear</span> and start a fresh conversation. Paste your request again&nbsp;more&nbsp;specifically.
+      </div>
+      <div class="emergency-card">
+        <strong>Claude broke something:</strong> Press <span class="cmd">Esc</span> to stop, then type <span class="cmd">/rewind</span> to undo the&nbsp;last&nbsp;change.
+      </div>
+      <div class="emergency-card">
+        <strong>Everything is slow:</strong> Type <span class="cmd">/compact</span> to free up memory. If still slow, do <span class="cmd">/clear</span> and&nbsp;start&nbsp;fresh.
+      </div>
+      <div class="emergency-card">
+        <strong>App won't start:</strong> Try: <span class="cmd">npm install && npm run dev</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">Volta AI Build Sprint &bull; April 2026 / Facilitated by Jitsy</footer>
+
+</div>
+
+<script>
+// UID + storage key
+(function(){
+  if(!localStorage.getItem('volta-journal-uid')){
+    localStorage.setItem('volta-journal-uid','vj-'+Math.random().toString(36).substr(2,9));
+  }
+})();
+function getStorageKey(){
+  return 'volta-build-journal-'+localStorage.getItem('volta-journal-uid');
+}
+
+// Tab switching
+function switchTab(tab){
+  document.getElementById('tab-journal').classList.toggle('active',tab==='journal');
+  document.getElementById('tab-prompts').classList.toggle('active',tab==='prompts');
+  const btns=document.querySelectorAll('.tab-btn');
+  btns[0].classList.toggle('active',tab==='journal');
+  btns[1].classList.toggle('active',tab==='prompts');
+  window.scrollTo({top:0});
+}
+
+// Vibe toggle
+function toggleVibe(el){
+  el.classList.toggle('selected');
+  saveAll();
+}
+
+// Service toggle
+function toggleService(el){
+  el.classList.toggle('checked');
+  const cb=el.querySelector('input[type="checkbox"]');
+  cb.checked=!cb.checked;
+  saveAll();
+}
+
+// Generate CLAUDE.md
+function generateClaudeMd(){
+  const name=document.getElementById('project-name').value||'My Project';
+  const what=document.getElementById('what-building').value;
+  const who=document.getElementById('who-for').value;
+  const problem=document.getElementById('problem').value;
+  const features=[];
+  for(let i=1;i<=5;i++){const v=document.getElementById('feature-'+i).value;if(v)features.push(v);}
+  const niceToHave=[];
+  for(let i=1;i<=2;i++){const v=document.getElementById('nice-'+i).value;if(v)niceToHave.push(v);}
+  const vibes=[];
+  document.querySelectorAll('.vibe-pill.selected').forEach(p=>vibes.push(p.textContent));
+  const colors=document.getElementById('colors').value;
+  const reference=document.getElementById('reference').value;
+  const services=[];
+  document.querySelectorAll('.service-card.checked').forEach(c=>{
+    services.push(c.querySelector('[data-service]').dataset.service);
+  });
+
+  let md=`# ${name}\n\n`;
+  md+=`## What This Is\n`;
+  if(what)md+=what+'\n';
+  if(who)md+=`\nBuilt for: ${who}\n`;
+  if(problem)md+=`\nProblem it solves: ${problem}\n`;
+  md+='\n';
+
+  if(features.length){
+    md+=`## Core Features\n`;
+    features.forEach((f,i)=>md+=`${i+1}. ${f}\n`);
+    md+='\n';
+  }
+
+  if(niceToHave.length){
+    md+=`## Nice-to-Have\n`;
+    niceToHave.forEach(f=>md+=`- ${f}\n`);
+    md+='\n';
+  }
+
+  md+=`## Tech Stack\n`;
+  md+=`- React + TypeScript\n- Tailwind CSS\n`;
+  services.forEach(s=>md+=`- ${s}\n`);
+  md+='\n';
+
+  md+=`## Design Rules\n`;
+  if(vibes.length)md+=`- Vibe: ${vibes.join(', ')}\n`;
+  if(colors)md+=`- Colors: ${colors}\n`;
+  if(reference)md+=`- Reference: ${reference}\n`;
+  md+=`- Mobile-first responsive design\n`;
+  md+=`- Canadian English spelling\n`;
+  md+='\n';
+
+  md+=`## Important\n`;
+  md+=`- Never commit API keys or secrets to the codebase\n`;
+  md+=`- Keep the UI responsive and fast\n`;
+  md+=`- "Fix" means fix only the bug. Do not refactor unrelated code\n`;
+
+  const output=document.getElementById('claude-output');
+  output.textContent=md;
+  const area=document.getElementById('output-area');
+  area.classList.add('visible');
+  area.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Copy output
+function copyOutput(btn){
+  const text=document.getElementById('claude-output').textContent;
+  navigator.clipboard.writeText(text);
+  btn.textContent='Copied!';
+  btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},2000);
+}
+
+// Copy prompt
+function copyPrompt(btn){
+  const body=btn.closest('.prompt-card').querySelector('.prompt-body');
+  navigator.clipboard.writeText(body.innerText);
+  btn.textContent='Copied!';
+  btn.classList.add('copied');
+  setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},2000);
+}
+
+// Save / Load
+function saveAll(){
+  const data={};
+  // Text inputs and textareas
+  document.querySelectorAll('#tab-journal input[type="text"], #tab-journal textarea').forEach(el=>{
+    if(el.id)data[el.id]=el.value;
+  });
+  // Vibes
+  data._vibes=[];
+  document.querySelectorAll('.vibe-pill.selected').forEach(p=>data._vibes.push(p.textContent));
+  // Services
+  data._services=[];
+  document.querySelectorAll('.service-card.checked').forEach(c=>{
+    data._services.push(c.querySelector('[data-service]').dataset.service);
+  });
+  localStorage.setItem(getStorageKey(),JSON.stringify(data));
+}
+
+function loadAll(){
+  const raw=localStorage.getItem(getStorageKey());
+  if(!raw)return;
+  try{
+    const data=JSON.parse(raw);
+    Object.keys(data).forEach(k=>{
+      if(k.startsWith('_'))return;
+      const el=document.getElementById(k);
+      if(el)el.value=data[k];
+    });
+    if(data._vibes){
+      document.querySelectorAll('.vibe-pill').forEach(p=>{
+        if(data._vibes.includes(p.textContent))p.classList.add('selected');
+      });
+    }
+    if(data._services){
+      document.querySelectorAll('.service-card').forEach(c=>{
+        const svc=c.querySelector('[data-service]').dataset.service;
+        if(data._services.includes(svc)){
+          c.classList.add('checked');
+          c.querySelector('input[type="checkbox"]').checked=true;
+        }
+      });
+    }
+  }catch(e){}
+}
+
+// Auto-save on input
+document.querySelectorAll('#tab-journal input[type="text"], #tab-journal textarea').forEach(el=>{
+  el.addEventListener('input',saveAll);
+});
+
+// Load on startup
+loadAll();
+</script>
+</body>
+</html>
