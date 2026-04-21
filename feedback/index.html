@@ -312,19 +312,16 @@
     };
 
     try {
-      const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+      await fetch('https://script.google.com/macros/s/AKfycbwIqLPpVxonIqwjsmhoZs3nd7F8xJ_puPbKNMovhq41UKmq2v74HXoWowNGgoaOHpsw/exec', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
 
-      if (res.ok) {
-        document.getElementById('form-view').style.display = 'none';
-        document.getElementById('success-view').classList.add('show');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        throw new Error('Submission failed');
-      }
+      document.getElementById('form-view').style.display = 'none';
+      document.getElementById('success-view').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       alert('Something went wrong sending your feedback. Please try again or email Jitsy directly.');
       btn.disabled = false;
