@@ -19,21 +19,78 @@
   .blue { color: #6bc5ff; }
   .purple { color: #c084fc; }
 
-  .card { background: #141414; border: 1px solid #2a2a2a; border-radius: 18px; padding: 28px; margin-bottom: 20px; transition: border-color 0.2s; }
-  .card:focus-within { border-color: #c8ff0044; }
+  .card {
+    background: linear-gradient(180deg, #161616 0%, #121212 100%);
+    border: 1px solid #242424;
+    border-radius: 20px;
+    padding: 32px;
+    margin-bottom: 18px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.02);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+  }
+  .card:hover {
+    border-color: #2f2f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .card:focus-within {
+    border-color: #c8ff0044;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 3px rgba(200,255,0,0.08), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
 
-  .card-header { margin-bottom: 16px; }
-  .card-num { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; padding: 4px 10px; border-radius: 6px; margin-bottom: 10px; }
-  .card-num.n1 { background: #c8ff0020; color: #c8ff00; }
-  .card-num.n2 { background: #ff6b6b20; color: #ff6b6b; }
-  .card-num.n3 { background: #6bc5ff20; color: #6bc5ff; }
-  .card-num.n4 { background: #c084fc20; color: #c084fc; }
-  .card-num.n5 { background: #ffbd2e20; color: #ffbd2e; }
-  .card-num.n6 { background: #27c93f20; color: #27c93f; }
-  .card-num.n7 { background: #c8ff0020; color: #c8ff00; }
+  .card-header { margin-bottom: 20px; }
+  .card-num {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .card-num::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .card-num.n1 { background: #c8ff0015; color: #c8ff00; border: 1px solid #c8ff0033; }
+  .card-num.n1::before { background: #c8ff00; box-shadow: 0 0 8px #c8ff00; }
+  .card-num.n2 { background: #ff6b6b15; color: #ff6b6b; border: 1px solid #ff6b6b33; }
+  .card-num.n2::before { background: #ff6b6b; box-shadow: 0 0 8px #ff6b6b; }
+  .card-num.n3 { background: #6bc5ff15; color: #6bc5ff; border: 1px solid #6bc5ff33; }
+  .card-num.n3::before { background: #6bc5ff; box-shadow: 0 0 8px #6bc5ff; }
+  .card-num.n4 { background: #c084fc15; color: #c084fc; border: 1px solid #c084fc33; }
+  .card-num.n4::before { background: #c084fc; box-shadow: 0 0 8px #c084fc; }
+  .card-num.n5 { background: #ffbd2e15; color: #ffbd2e; border: 1px solid #ffbd2e33; }
+  .card-num.n5::before { background: #ffbd2e; box-shadow: 0 0 8px #ffbd2e; }
+  .card-num.n6 { background: #27c93f15; color: #27c93f; border: 1px solid #27c93f33; }
+  .card-num.n6::before { background: #27c93f; box-shadow: 0 0 8px #27c93f; }
+  .card-num.n7 { background: #c8ff0015; color: #c8ff00; border: 1px solid #c8ff0033; }
+  .card-num.n7::before { background: #c8ff00; box-shadow: 0 0 8px #c8ff00; }
 
-  .card h3 { font-size: 20px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.3px; }
-  .card p.hint { font-size: 14px; color: #666; font-style: italic; line-height: 1.6; }
+  .card h3 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+  }
+  .card p.hint { font-size: 14px; color: #777; font-style: italic; line-height: 1.6; }
 
   /* Dual energy slider */
   .journey-group { margin: 18px 0 8px; }
@@ -317,7 +374,7 @@
   </div>
 
   <div class="footer">
-    <p>Volta AI Build Sprint . April 2026 . Facilitated by Jitsy</p>
+    <p>Volta AI Build Sprint . April 2026 . Facilitated by Jitakshi</p>
   </div>
 
 </div>
