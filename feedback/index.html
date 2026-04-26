@@ -354,28 +354,46 @@
     height: 1px;
     background: rgba(255,255,255,0.06);
   }
+  .bonus-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #ffb84d;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .bonus-label::before { content: '◆'; font-size: 8px; }
+  .bonus-label .opt {
+    color: #6a6a6a;
+    letter-spacing: 2px;
+    font-size: 9px;
+  }
   .bonus-toggle {
     display: inline-flex; align-items: center; gap: 12px;
-    padding: 12px 18px;
-    border: 1px solid rgba(255,255,255,0.12);
+    padding: 13px 20px;
+    border: 1px solid rgba(255,184,77,0.45);
+    background: rgba(255,184,77,0.06);
     border-radius: 100px;
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    color: #c8cad0;
+    color: #ffb84d;
     user-select: none;
   }
   .bonus-toggle:hover {
-    border-color: rgba(255,184,77,0.4);
-    color: #f5f5f7;
+    border-color: #ffb84d;
+    background: rgba(255,184,77,0.14);
+    box-shadow: 0 0 18px rgba(255,184,77,0.2);
   }
   .bonus-toggle.on {
     border-color: #ffb84d;
-    background: rgba(255,184,77,0.08);
+    background: rgba(255,184,77,0.18);
     color: #ffb84d;
+    box-shadow: 0 0 22px rgba(255,184,77,0.28);
   }
   .bonus-toggle .mark {
     width: 14px; height: 14px;
@@ -394,7 +412,7 @@
     margin-top: 0;
   }
   .bonus-reveal.show {
-    max-height: 220px;
+    max-height: 280px;
     opacity: 1;
     margin-top: 22px;
   }
@@ -781,21 +799,35 @@
   }
 
   .back-btn {
-    position: fixed; top: 50%; left: 18px;
-    transform: translateY(-50%);
-    width: 36px; height: 36px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(0,0,0,0.4);
-    border-radius: 50%;
-    color: #6a6a6a;
+    position: fixed; top: 72px; left: 28px;
+    width: auto; height: auto;
+    padding: 8px 14px 8px 11px;
+    border: 1px solid rgba(255,184,77,0.4);
+    background: rgba(15,15,15,0.9);
+    border-radius: 100px;
+    color: #ffb84d;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 16px;
-    cursor: pointer; z-index: 10;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer; z-index: 11;
     transition: all 0.2s ease;
     display: none;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(8px);
   }
-  .back-btn.show { display: block; }
-  .back-btn:hover { color: #ffb84d; border-color: rgba(255,184,77,0.4); }
+  .back-btn.show { display: inline-flex; }
+  .back-btn:hover {
+    border-color: #ffb84d;
+    background: rgba(255,184,77,0.14);
+    box-shadow: 0 0 16px rgba(255,184,77,0.28);
+    transform: translateX(-2px);
+  }
+  .back-btn .arrow { font-size: 13px; line-height: 1; }
+  @media (max-width: 600px) {
+    .back-btn { top: 68px; left: 16px; font-size: 9px; padding: 7px 12px 7px 10px; }
+  }
 </style>
 </head>
 <body>
@@ -806,7 +838,7 @@
 </div>
 <div class="preview-ribbon">— preview build · not submitting anywhere —</div>
 <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
-<button class="back-btn" id="backBtn" title="Go back">←</button>
+<button class="back-btn" id="backBtn" title="Go back to previous step"><span class="arrow">←</span><span>Back</span></button>
 <div class="toast-stack" id="toastStack"></div>
 
 <!-- 00 TITLE -->
@@ -900,9 +932,13 @@
       <div class="chip">The format</div>
       <div class="chip">The pace</div>
       <div class="chip">The teaching</div>
-      <div class="chip">The space</div>
+      <div class="chip">The duration</div>
+      <div class="chip">The schedule</div>
+      <div class="chip">The group size</div>
+      <div class="chip">The 1:1 time</div>
+      <div class="chip">The community</div>
+      <div class="chip">The demo day</div>
       <div class="chip">The tools</div>
-      <div class="chip">The vibe</div>
       <div class="chip">Something else</div>
     </div>
     <div class="stack">
@@ -930,13 +966,14 @@
 
     <div class="divider"></div>
 
+    <div class="bonus-label">Get featured <span class="opt">· optional</span></div>
     <div class="bonus-toggle" id="bonusToggle">
       <span class="mark"></span>
       <span>Feature my project in the newsletter (100+ subs)</span>
     </div>
     <div class="bonus-reveal" id="bonusReveal">
-      <div class="field-mini">What would actually help right now?</div>
-      <input class="field" id="f-news-ask" type="text" placeholder="Early users? A specific kind of feedback? Intros?">
+      <div class="field-mini">Your pitch</div>
+      <textarea class="field" id="f-news-ask" placeholder="What it is, who it's for, why it matters."></textarea>
     </div>
   </div>
 </section>
@@ -990,7 +1027,7 @@
 <div class="cues">
   <span class="group"><kbd>↵ Enter</kbd> continue</span>
   <span class="group"><kbd>Shift</kbd>+<kbd>↵</kbd> new line</span>
-  <span class="group"><kbd>←</kbd> back</span>
+  <span class="group"><kbd>⌘</kbd>+<kbd>←</kbd> back</span>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1074,6 +1111,13 @@
       next();
       return;
     }
+    // Cmd/Ctrl + ← always goes back (even while typing in inputs)
+    if (e.key === 'ArrowLeft' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      back();
+      return;
+    }
+    // Plain ← only when not focused on an input/textarea
     if (e.key === 'ArrowLeft' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
       back();
     }
