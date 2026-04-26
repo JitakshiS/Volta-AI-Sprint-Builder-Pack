@@ -1054,6 +1054,7 @@
       progressFill.style.width = '100%';
       backBtn.classList.remove('show');
       renderFounderCard();
+      submitToSheet();
     } else {
       stepNum.textContent = String(i).padStart(2, '0');
       progressFill.style.width = (i / total) * 100 + '%';
@@ -1302,6 +1303,60 @@
   }
 
   document.getElementById('downloadBtn').addEventListener('click', downloadCard);
+
+  // Submit responses to Google Sheet (fire-and-forget; idempotent)
+  let submitted = false;
+  const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwIqLPpVxonIqwjsmhoZs3nd7F8xJ_puPbKNMovhq41UKmq2v74HXoWowNGgoaOHpsw/exec';
+
+  function submitToSheet() {
+    if (submitted) return;
+    submitted = true;
+
+    const get = (id) => document.getElementById(id)?.value?.trim() || '';
+
+    const whyChips = Array.from(document.querySelectorAll('[data-chips="why"] .chip.selected'))
+      .map(c => c.textContent);
+    const changeChip = document.querySelector('[data-chips="where"] .chip.selected');
+    const changeText = get('f-change');
+    const missingParts = [];
+    if (changeChip) missingParts.push(changeChip.textContent);
+    if (changeText) missingParts.push(changeText);
+
+    const newsletterOptIn = document.getElementById('bonusToggle').classList.contains('on');
+    const newsletterPitch = get('f-news-ask');
+    const price = priceInput.value.trim();
+
+    const data = {
+      // Existing Apps Script columns
+      name: get('f-yourname') || 'Anonymous',
+      before_sprint: document.getElementById('day1Slider').value,
+      before_label: '',
+      after_sprint: document.getElementById('todaySlider').value,
+      after_label: '',
+      most_helpful: whyChips.join(', '),
+      missing: missingParts.join(' — '),
+      testimonial: get('f-quote'),
+      willing_to_pay: price ? '$' + price : '',
+      whats_next: newsletterOptIn ? newsletterPitch : '',
+      // Bonus columns — extend the Apps Script to capture if you want them
+      project_name: get('f-name'),
+      project_link: get('f-link'),
+      project_tagline: get('f-line'),
+      role_or_credit: get('f-yourrole'),
+      newsletter_optin: newsletterOptIn ? 'yes' : 'no'
+    };
+
+    try {
+      fetch(SHEET_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).catch(err => console.error('Sheet submission failed:', err));
+    } catch (err) {
+      console.error('Sheet submission failed:', err);
+    }
+  }
 
   show(0);
 </script>
