@@ -353,9 +353,31 @@
 
   /* Bonus toggle (newsletter opt-in inside testimonial) */
   .divider {
-    margin: 38px 0 22px;
+    margin: 28px 0 18px;
     height: 1px;
     background: rgba(255,255,255,0.06);
+  }
+  .done-btn {
+    display: block;
+    margin: 36px auto 0;
+    padding: 14px 32px;
+    background: rgba(255,184,77,0.14);
+    border: 1px solid rgba(255,184,77,0.55);
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #ffb84d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .done-btn:hover {
+    background: rgba(255,184,77,0.24);
+    border-color: #ffb84d;
+    box-shadow: 0 0 24px rgba(255,184,77,0.32);
+    transform: translateY(-1px);
   }
   .bonus-label {
     font-family: 'JetBrains Mono', monospace;
@@ -976,6 +998,8 @@
       <div class="field-mini">Your pitch</div>
       <textarea class="field" id="f-news-ask" placeholder="What it is, who it's for, why it matters."></textarea>
     </div>
+
+    <button class="done-btn" id="doneBtn" type="button">▸ done · reveal my card</button>
   </div>
 </section>
 
@@ -1027,7 +1051,7 @@
 
 <div class="cues">
   <span class="group"><kbd>↵ Enter</kbd> continue</span>
-  <span class="group"><kbd>Shift</kbd>+<kbd>↵</kbd> new line</span>
+  <span class="group"><kbd>⌘</kbd>+<kbd>↵</kbd> next (in text areas)</span>
   <span class="group"><kbd>⌘</kbd>+<kbd>←</kbd> back</span>
 </div>
 
@@ -1108,7 +1132,14 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      if (e.target.tagName === 'TEXTAREA' && e.shiftKey) return;
+      // Cmd/Ctrl + Enter always advances (works inside textareas too)
+      if (e.metaKey || e.ctrlKey) {
+        e.preventDefault();
+        next();
+        return;
+      }
+      // Plain Enter in a textarea = new line (don't advance — would skip content below)
+      if (e.target.tagName === 'TEXTAREA') return;
       e.preventDefault();
       next();
       return;
@@ -1126,6 +1157,7 @@
   });
 
   document.getElementById('startBtn').addEventListener('click', next);
+  document.getElementById('doneBtn').addEventListener('click', next);
 
   document.querySelectorAll('[data-chips]').forEach(group => {
     const single = group.hasAttribute('data-single');
