@@ -800,15 +800,6 @@
     .card-stat-label { width: 60px; }
   }
 
-  .preview-ribbon {
-    position: fixed; top: 22px; left: 50%;
-    transform: translateX(-50%);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
-    color: #4a4a4a;
-    z-index: 10; pointer-events: none;
-  }
-
   .back-btn {
     position: fixed; top: 72px; left: 28px;
     width: auto; height: auto;
@@ -847,7 +838,6 @@
   <div class="hud-left"><span class="dot"></span><span>SPRINT.DEBRIEF</span></div>
   <div class="hud-right"><span id="stepNum">00</span><span class="total"> / 05</span></div>
 </div>
-<div class="preview-ribbon">— preview build · not submitting anywhere —</div>
 <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
 <button class="back-btn" id="backBtn" title="Go back to previous step"><span class="arrow">←</span><span>Back</span></button>
 <div class="toast-stack" id="toastStack"></div>
