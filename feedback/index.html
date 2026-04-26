@@ -1032,11 +1032,6 @@
         </div>
       </div>
 
-      <div class="card-section card-piece" id="cardTraitsSection">
-        <div class="card-section-label">Powered by</div>
-        <div class="card-traits" id="cardTraits"></div>
-      </div>
-
       <div class="card-piece" id="cardLinkWrap">
         <a class="card-link" id="cardLink" href="#" target="_blank" rel="noopener">▸ visit project</a>
       </div>
@@ -1231,9 +1226,6 @@
     const d = parseInt(today.value) - parseInt(day1.value);
     const growth = (d >= 0 ? '+' : '') + d;
 
-    const traitChips = document.querySelectorAll('[data-chips="why"] .chip.selected');
-    const traits = Array.from(traitChips).map(c => c.textContent);
-
     document.getElementById('cardTitle').textContent = project.toUpperCase();
 
     const bylineEl = document.getElementById('cardByline');
@@ -1255,15 +1247,6 @@
 
     document.getElementById('cardGrowth').textContent = growth;
     document.getElementById('cardGrowth').style.color = d >= 0 ? '#ffb84d' : '#ff6a6a';
-
-    const traitsEl = document.getElementById('cardTraits');
-    const traitsSection = document.getElementById('cardTraitsSection');
-    if (traits.length > 0) {
-      traitsEl.innerHTML = traits.map(t => `<span class="trait">${t}</span>`).join('');
-      traitsSection.style.display = '';
-    } else {
-      traitsSection.style.display = 'none';
-    }
 
     const linkWrap = document.getElementById('cardLinkWrap');
     if (link) {
