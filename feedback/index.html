@@ -3,530 +3,1263 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sprint Wrap-Up — Volta AI Sprint</title>
+<title>SPRINT.DEBRIEF</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #0a0a0a;
-    color: #fff;
-    min-height: 100vh;
-    padding: 48px 20px 80px;
+    background: #000;
+    color: #f5f5f7;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
-  }
-  .container { max-width: 640px; margin: 0 auto; }
-
-  .header { text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid #1a1a1a; }
-  .header .tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    padding: 7px 16px;
-    border-radius: 100px;
-    background: #c8ff00;
-    color: #0a0a0a;
-    margin-bottom: 20px;
-  }
-  .header h1 {
-    font-size: 40px;
-    font-weight: 800;
-    letter-spacing: -1.2px;
-    line-height: 1.1;
-    margin-bottom: 14px;
-  }
-  .header p {
-    font-size: 16px;
-    color: #888;
-    line-height: 1.7;
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  .accent { color: #c8ff00; }
-  .coral { color: #ff6b6b; }
-  .blue { color: #6bc5ff; }
-  .purple { color: #c084fc; }
-
-  .card {
-    background: linear-gradient(180deg, #161616 0%, #121212 100%);
-    border: 1px solid #242424;
-    border-radius: 20px;
-    padding: 32px;
-    margin-bottom: 18px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.02);
     position: relative;
-    overflow: hidden;
   }
-  .card::before {
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 50%, rgba(255,184,77,0.05), transparent 70%),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0 1px, transparent 1px 3px);
+    pointer-events: none; z-index: 1;
+  }
+
+  /* HUD */
+  .hud {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 22px 28px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: #6a6a6a; z-index: 10;
+  }
+  .hud-left { display: flex; align-items: center; gap: 10px; }
+  .hud-left .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #ffb84d;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+  .hud-right .total { color: #6a6a6a; }
+  .hud-right #stepNum { color: #f5f5f7; }
+
+  .progress {
+    position: fixed; top: 56px; left: 0; right: 0;
+    height: 1px;
+    background: rgba(255,255,255,0.06); z-index: 10;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #ffb84d, #ff9b1a);
+    box-shadow: 0 0 14px rgba(255,184,77,0.55);
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Toast stack — game-style achievement notifications */
+  .toast-stack {
+    position: fixed;
+    top: 84px;
+    right: 28px;
+    display: flex; flex-direction: column;
+    gap: 8px;
+    z-index: 20;
+    pointer-events: none;
+  }
+  .toast {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #ffb84d;
+    padding: 11px 18px;
+    background: rgba(15, 15, 15, 0.92);
+    border: 1px solid rgba(255,184,77,0.4);
+    border-radius: 3px;
+    box-shadow: 0 0 24px rgba(255,184,77,0.18), inset 0 0 0 1px rgba(255,184,77,0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    transform: translateX(28px);
+    transition: opacity 0.3s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    white-space: nowrap;
+    position: relative;
+  }
+  .toast::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+    top: 0; left: 0; bottom: 0;
+    width: 2px;
+    background: #ffb84d;
+    box-shadow: 0 0 8px #ffb84d;
   }
-  .card:hover {
-    border-color: #2f2f2f;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
-  }
-  .card:focus-within {
-    border-color: #c8ff0044;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 3px rgba(200,255,0,0.08), inset 0 1px 0 rgba(255,255,255,0.03);
+  .toast.in { opacity: 1; transform: translateX(0); }
+  .toast .achievement-tag {
+    color: #6a6a6a;
+    margin-right: 8px;
+    font-size: 9px;
   }
 
-  .card-header { margin-bottom: 20px; }
-  .card-num {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-    padding: 6px 14px;
-    border-radius: 100px;
-    margin-bottom: 14px;
+  /* Stages */
+  .stage {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 78px 32px 72px;
+    opacity: 0; pointer-events: none;
+    transform: translateY(14px);
+    transition: opacity 0.45s ease, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 5; overflow-y: auto;
+  }
+  .stage.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+  .frame { width: 100%; max-width: 720px; text-align: left; position: relative; }
+  .frame.center { text-align: center; }
+
+  .tag {
     font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ffb84d;
+    margin-bottom: 18px;
+    display: inline-flex; align-items: center; gap: 8px;
   }
-  .card-num::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-  .card-num.n1 { background: #c8ff0015; color: #c8ff00; border: 1px solid #c8ff0033; }
-  .card-num.n1::before { background: #c8ff00; box-shadow: 0 0 8px #c8ff00; }
-  .card-num.n2 { background: #ff6b6b15; color: #ff6b6b; border: 1px solid #ff6b6b33; }
-  .card-num.n2::before { background: #ff6b6b; box-shadow: 0 0 8px #ff6b6b; }
-  .card-num.n3 { background: #6bc5ff15; color: #6bc5ff; border: 1px solid #6bc5ff33; }
-  .card-num.n3::before { background: #6bc5ff; box-shadow: 0 0 8px #6bc5ff; }
-  .card-num.n4 { background: #c084fc15; color: #c084fc; border: 1px solid #c084fc33; }
-  .card-num.n4::before { background: #c084fc; box-shadow: 0 0 8px #c084fc; }
-  .card-num.n5 { background: #ffbd2e15; color: #ffbd2e; border: 1px solid #ffbd2e33; }
-  .card-num.n5::before { background: #ffbd2e; box-shadow: 0 0 8px #ffbd2e; }
-  .card-num.n6 { background: #27c93f15; color: #27c93f; border: 1px solid #27c93f33; }
-  .card-num.n6::before { background: #27c93f; box-shadow: 0 0 8px #27c93f; }
-  .card-num.n7 { background: #c8ff0015; color: #c8ff00; border: 1px solid #c8ff0033; }
-  .card-num.n7::before { background: #c8ff00; box-shadow: 0 0 8px #c8ff00; }
+  .tag::before { content: '▸'; }
 
-  .card h3 {
-    font-size: 21px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: -0.4px;
-    line-height: 1.3;
-    color: #fff;
+  h1.q {
+    font-size: clamp(32px, 4.6vw, 52px);
+    font-weight: 700; letter-spacing: -1px;
+    line-height: 1.12;
+    color: #f5f5f7;
   }
-  .card p.hint {
+
+  .micro {
+    margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #8a8a8a;
+  }
+  .micro.center { text-align: center; }
+
+  /* Inputs */
+  .field {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    padding: 14px 0;
+    color: #f5f5f7;
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.4px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .field::placeholder { color: #3d3d3d; }
+  .field:focus {
+    outline: none;
+    border-bottom-color: #ffb84d;
+    box-shadow: 0 1px 0 0 #ffb84d;
+  }
+  textarea.field {
+    resize: none;
+    min-height: 80px;
+    padding: 12px 0;
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .field + .field { margin-top: 18px; }
+
+  .stack { margin-top: 36px; }
+
+  /* Chips */
+  .chip-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-top: 12px;
+  }
+  .chip-row.center { justify-content: center; }
+  .chip {
+    padding: 9px 16px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 100px;
+    font-size: 14px;
+    color: #c8cad0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .chip:hover {
+    border-color: rgba(255,184,77,0.4);
+    color: #f5f5f7;
+  }
+  .chip.selected {
+    border-color: #ffb84d;
+    background: rgba(255,184,77,0.1);
+    color: #ffb84d;
+    transform: translateY(-1px);
+    box-shadow: 0 0 14px rgba(255,184,77,0.18);
+  }
+  .chip-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #6a6a6a;
+    margin-top: 24px;
+  }
+  .chip-label.center { text-align: center; }
+
+  /* Sliders */
+  .slider-block { margin-top: 36px; }
+  .slider-row { margin-bottom: 28px; }
+  .slider-row:last-child { margin-bottom: 0; }
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .slider-label .when {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #8a8a8a;
+  }
+  .slider-label .val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px;
+    font-weight: 600;
+    color: #ffb84d;
+    letter-spacing: -1px;
+  }
+  .slider-label .val .unit {
     font-size: 14px;
     color: #6a6a6a;
-    line-height: 1.6;
-    font-weight: 400;
+    margin-left: 2px;
   }
-
-  /* Dual energy slider */
-  .journey-group { margin: 18px 0 8px; }
-  .journey-label { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .energy-slider { position: relative; padding: 4px 8px 0; }
-  .energy-slider input[type="range"] {
-    width: 100%;
-    height: 8px;
-    border-radius: 10px;
-    -webkit-appearance: none;
-    background: linear-gradient(90deg, #3a2020 0%, #3a2e20 30%, #2e3a20 70%, #c8ff00 100%);
-    outline: none;
-  }
-  .energy-slider input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: #fff;
-    border: 3px solid #c8ff00;
-    cursor: pointer;
-    box-shadow: 0 2px 12px rgba(200,255,0,0.4);
-  }
-  .energy-value { font-size: 14px; color: #c8ff00; font-weight: 700; text-align: center; margin-top: 10px; }
-
-  /* Textarea */
-  .big-input {
-    width: 100%;
-    background: #0a0a0a;
-    border: 1px solid #2a2a2a;
-    border-radius: 12px;
-    padding: 14px 18px;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-    outline: none;
-    transition: all 0.2s;
-    resize: vertical;
-  }
-  .big-input:focus { border-color: #c8ff00; }
-  .big-input::placeholder { color: #444; }
-
-  /* Price slider */
-  .pricing-section { text-align: center; margin-top: 12px; }
-  .price-display { font-size: 56px; font-weight: 900; color: #c8ff00; line-height: 1; margin-bottom: 6px; font-family: 'Inter', sans-serif; }
-  .price-reaction { font-size: 15px; color: #888; min-height: 22px; margin-bottom: 20px; }
-  .recommend-slider { width: 100%; padding: 0 8px; }
-  .recommend-slider input[type="range"] {
-    width: 100%;
-    height: 10px;
-    border-radius: 10px;
-    -webkit-appearance: none;
-    background: #1a1a1a;
-    outline: none;
-  }
-  .recommend-slider input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: #fff;
-    border: 4px solid #c8ff00;
-    cursor: pointer;
-  }
-  .recommend-scale { display: flex; justify-content: space-between; margin-top: 12px; font-size: 12px; color: #555; padding: 0 12px; }
-
-  /* Chip picker */
-  .chip-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
-  .chip {
-    background: #0a0a0a;
-    border: 1.5px solid #2a2a2a;
-    color: #ccc;
-    padding: 10px 18px;
+  .slider {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 4px;
+    background: rgba(255,255,255,0.08);
     border-radius: 100px;
-    font-size: 14px;
+    outline: none; cursor: pointer;
+  }
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 22px; height: 22px;
+    background: #ffb84d;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(255,184,77,0.18), 0 0 20px rgba(255,184,77,0.45);
+    transition: transform 0.15s ease;
+  }
+  .slider::-webkit-slider-thumb:hover { transform: scale(1.12); }
+  .slider::-webkit-slider-thumb:active { transform: scale(1.18); }
+  .slider::-moz-range-thumb {
+    width: 22px; height: 22px;
+    background: #ffb84d;
+    border-radius: 50%;
+    cursor: pointer; border: none;
+    box-shadow: 0 0 0 4px rgba(255,184,77,0.18), 0 0 20px rgba(255,184,77,0.45);
+  }
+
+  .delta-display {
+    margin-top: 32px;
+    padding: 18px 24px;
+    border: 1px solid rgba(255,184,77,0.25);
+    border-radius: 12px;
+    background: rgba(255,184,77,0.04);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .delta-display .delta-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    color: #8a8a8a;
+  }
+  .delta-display .delta-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px; font-weight: 600;
+    color: #ffb84d;
+    letter-spacing: -1px;
+  }
+
+  /* Price */
+  .price-stage .frame { text-align: center; }
+  .price-row {
+    display: flex; align-items: center; justify-content: center;
+    margin: 40px 0 0;
+  }
+  .price-row .dollar {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(64px, 11vw, 130px);
     font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Inter', sans-serif;
+    color: #ffb84d;
+    line-height: 1;
+    margin-right: 10px;
+    text-shadow: 0 0 32px rgba(255,184,77,0.4);
   }
-  .chip:hover { border-color: #555; color: #fff; }
-  .chip.selected { background: #c8ff00; color: #0a0a0a; border-color: #c8ff00; }
-  .chip-hint { font-size: 12px; color: #555; margin-top: 10px; font-style: italic; }
-
-  /* Required mark */
-  .required { color: #ff6b6b; margin-left: 4px; }
-
-  /* Submit */
-  .submit-btn {
-    display: block;
-    width: 100%;
-    background: #c8ff00;
-    color: #0a0a0a;
+  .price-input {
+    background: transparent;
     border: none;
-    border-radius: 16px;
-    padding: 22px;
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
+    color: #f5f5f7;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(64px, 11vw, 130px);
+    font-weight: 600;
+    line-height: 1;
+    text-align: left;
+    width: 6ch;
+    letter-spacing: -2px;
+    caret-color: #ffb84d;
+    transition: text-shadow 0.4s ease, transform 0.3s ease;
+  }
+  .price-input::placeholder { color: #2a2a2a; }
+  .price-input:focus { outline: none; }
+  .price-input.locked {
+    color: #ffb84d;
+    text-shadow: 0 0 28px rgba(255,184,77,0.7), 0 0 60px rgba(255,184,77,0.35);
+    animation: priceLock 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @keyframes priceLock {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+
+  /* Why-reveal: chips that fade in once a price has been entered */
+  .why-reveal {
+    margin-top: 44px;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .why-reveal.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Bonus toggle (newsletter opt-in inside testimonial) */
+  .divider {
+    margin: 38px 0 22px;
+    height: 1px;
+    background: rgba(255,255,255,0.06);
+  }
+  .bonus-toggle {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 12px 18px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 100px;
     cursor: pointer;
-    transition: all 0.25s ease;
-    margin-top: 40px;
-    letter-spacing: -0.2px;
-    box-shadow: 0 4px 20px rgba(200,255,0,0.15);
+    transition: all 0.2s ease;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #c8cad0;
+    user-select: none;
   }
-  .submit-btn:hover:not(:disabled) {
-    background: #d4ff33;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(200,255,0,0.25);
+  .bonus-toggle:hover {
+    border-color: rgba(255,184,77,0.4);
+    color: #f5f5f7;
   }
-  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .bonus-toggle.on {
+    border-color: #ffb84d;
+    background: rgba(255,184,77,0.08);
+    color: #ffb84d;
+  }
+  .bonus-toggle .mark {
+    width: 14px; height: 14px;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    line-height: 1;
+  }
+  .bonus-toggle.on .mark::after { content: '✓'; }
+  .bonus-reveal {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.45s ease, opacity 0.4s ease, margin-top 0.4s ease;
+    margin-top: 0;
+  }
+  .bonus-reveal.show {
+    max-height: 220px;
+    opacity: 1;
+    margin-top: 22px;
+  }
+  .field-mini {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #6a6a6a;
+    margin-bottom: 2px;
+  }
 
-  /* Success */
-  .success-screen {
-    display: none;
+  /* Testimonial — make it unmistakable */
+  .quote-stage .frame { text-align: left; position: relative; }
+  .quote-stage .big-quote {
+    position: absolute;
+    top: -60px;
+    left: -16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(160px, 22vw, 260px);
+    color: rgba(255,184,77,0.12);
+    line-height: 0.8;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+  .quote-stage .frame > * { position: relative; z-index: 1; }
+  .quote-stage textarea.field {
+    font-size: clamp(20px, 2.4vw, 26px);
+    line-height: 1.45;
+    min-height: 120px;
+    font-style: italic;
+    color: #f5f5f7;
+  }
+  .quote-stage textarea.field::placeholder {
+    font-style: italic;
+    color: #3d3d3d;
+  }
+  .quote-stage .credit-row {
+    display: flex; gap: 14px;
+    margin-top: 20px;
+  }
+  .quote-stage .credit-row .field {
+    font-size: 16px;
+  }
+
+  /* Cues */
+  .cues {
+    position: fixed; bottom: 22px; left: 0; right: 0;
     text-align: center;
-    padding: 60px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: #4a4a4a;
+    z-index: 10; pointer-events: none;
   }
-  .success-screen.show { display: block; }
-  .success-screen .celebrate { font-size: 80px; margin-bottom: 20px; animation: bounce 1s ease infinite; }
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
+  .cues kbd {
+    display: inline-block;
+    padding: 3px 7px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px;
+    margin: 0 4px;
+    color: #8a8a8a;
+    background: rgba(255,255,255,0.02);
   }
-  .success-screen h2 {
-    font-size: 34px;
+  .cues .group { display: inline-flex; align-items: center; gap: 4px; margin: 0 12px; }
+
+  /* Title */
+  .title-stage .title {
+    font-size: clamp(50px, 8vw, 96px);
     font-weight: 800;
-    margin-bottom: 16px;
-    letter-spacing: -0.8px;
+    letter-spacing: -2.8px;
+    line-height: 0.95;
+    color: #f5f5f7;
+    margin-bottom: 22px;
   }
-  .success-screen p { font-size: 16px; color: #888; line-height: 1.7; max-width: 460px; margin: 0 auto; }
+  .title-stage .title .accent { color: #ffb84d; }
+  .title-stage .sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #6a6a6a;
+    margin-bottom: 14px;
+  }
+  .title-stage .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #8a8a8a;
+    margin-bottom: 52px;
+  }
+  .title-stage .meta .sep { color: #3a3a3a; margin: 0 10px; }
+  .title-stage .start {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ffb84d;
+    animation: blink 1.4s ease-in-out infinite;
+    cursor: pointer;
+  }
+  @keyframes blink {
+    0%,49% { opacity: 1; }
+    50%,100% { opacity: 0.2; }
+  }
 
-  .footer { text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid #222; }
-  .footer p { font-size: 13px; color: #555; }
+  /* End — Founder Card */
+  .end-stage { padding: 50px 32px 64px; }
+  .end-stage .frame { max-width: 540px; }
+  .end-stage .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 4px;
+    color: #ffb84d;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .end-stage .saved {
+    font-size: clamp(24px, 3.4vw, 32px);
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    line-height: 1.1;
+    margin-bottom: 18px;
+    color: #f5f5f7;
+  }
 
-  @media (max-width: 500px) { body { padding: 24px 16px 60px; } .card { padding: 22px; } .header h1 { font-size: 28px; } }
+  .founder-card {
+    margin: 0 auto 16px;
+    padding: 26px 26px 22px;
+    background:
+      linear-gradient(180deg, rgba(255,184,77,0.06), transparent 35%),
+      linear-gradient(0deg, rgba(255,184,77,0.03), transparent 30%),
+      rgba(255,255,255,0.015);
+    border: 1px solid rgba(255,184,77,0.28);
+    border-radius: 4px;
+    text-align: left;
+    position: relative;
+    box-shadow: 0 0 60px rgba(255,184,77,0.08), inset 0 0 0 1px rgba(255,255,255,0.02);
+  }
+  /* Card corner ornaments — game card vibe */
+  .founder-card::before, .founder-card::after,
+  .founder-card .corner-tr, .founder-card .corner-bl {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    border-color: #ffb84d;
+    border-style: solid;
+    border-width: 0;
+  }
+  .founder-card::before {
+    top: 6px; left: 6px;
+    border-top-width: 1px; border-left-width: 1px;
+  }
+  .founder-card::after {
+    bottom: 6px; right: 6px;
+    border-bottom-width: 1px; border-right-width: 1px;
+  }
+  .founder-card .corner-tr {
+    top: 6px; right: 6px;
+    border-top-width: 1px; border-right-width: 1px;
+  }
+  .founder-card .corner-bl {
+    bottom: 6px; left: 6px;
+    border-bottom-width: 1px; border-left-width: 1px;
+  }
+
+  .card-header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 2.5px;
+    color: #6a6a6a;
+    margin-bottom: 22px;
+    text-transform: uppercase;
+  }
+  .card-header .card-num { color: #ffb84d; }
+
+  .card-title {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #f5f5f7;
+    line-height: 1.1;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .card-byline {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #ffb84d;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+    margin-bottom: 10px;
+  }
+  .card-byline .by {
+    color: #6a6a6a;
+    margin-right: 6px;
+  }
+  .card-tagline {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #8a8a8a;
+    font-style: italic;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .card-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,184,77,0.35), transparent);
+    margin: 18px 0;
+  }
+
+  .card-stat-row {
+    display: flex; align-items: baseline;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 6px;
+    gap: 10px;
+  }
+  .card-stat-label {
+    color: #8a8a8a;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    width: 70px;
+  }
+  .card-stat-dots {
+    color: #2a2a2a;
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+  .card-stat-val {
+    font-size: 16px; font-weight: 600;
+    flex-shrink: 0;
+    color: #ffb84d;
+    letter-spacing: -0.5px;
+  }
+
+  .card-section { margin-top: 18px; }
+  .card-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #8a8a8a;
+    letter-spacing: 2.5px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .card-traits {
+    display: flex; flex-wrap: wrap; gap: 6px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #c8cad0;
+  }
+  .card-traits .trait {
+    display: inline-flex; align-items: baseline; gap: 4px;
+  }
+  .card-traits .trait::before { content: '◆'; color: #ffb84d; font-size: 8px; }
+  .card-patch {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #c8cad0;
+    line-height: 1.5;
+  }
+
+  .card-quote {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-style: italic;
+    color: #f5f5f7;
+    line-height: 1.5;
+    margin-top: 14px;
+    padding-left: 14px;
+    border-left: 2px solid rgba(255,184,77,0.4);
+  }
+  .card-credit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #8a8a8a;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    padding-left: 14px;
+    text-transform: uppercase;
+  }
+
+  .card-link {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 10px 20px;
+    border: 1px solid rgba(255,184,77,0.45);
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #ffb84d;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+  }
+  .card-link:hover {
+    background: rgba(255,184,77,0.12);
+    border-color: #ffb84d;
+    box-shadow: 0 0 18px rgba(255,184,77,0.25);
+  }
+
+  /* Card piece reveal animation */
+  .card-piece {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.4s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .card-piece.in { opacity: 1; transform: translateY(0); }
+
+  .download-btn {
+    display: inline-block;
+    margin: 2px 0 14px;
+    padding: 12px 24px;
+    background: rgba(255,184,77,0.12);
+    border: 1px solid rgba(255,184,77,0.5);
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    color: #ffb84d;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .download-btn:hover {
+    background: rgba(255,184,77,0.22);
+    border-color: #ffb84d;
+    box-shadow: 0 0 22px rgba(255,184,77,0.32);
+    transform: translateY(-1px);
+  }
+  .download-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .end-stage .seal {
+    display: inline-block;
+    padding: 10px 22px;
+    border: 1px solid rgba(255,184,77,0.35);
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ffb84d;
+    margin-top: 6px;
+  }
+  .end-stage .share-hint {
+    display: block;
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #4a4a4a;
+    text-transform: uppercase;
+  }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .stage { padding: 80px 22px 90px; }
+    .price-input { width: 4ch; }
+    .cues .group:first-child { display: none; }
+    .quote-stage .credit-row { flex-direction: column; gap: 0; }
+    .quote-stage .big-quote { top: -36px; font-size: 160px; }
+    .toast-stack { right: 12px; left: 12px; }
+    .toast { white-space: normal; }
+    .founder-card { padding: 26px 22px 22px; }
+    .card-stat-label { width: 60px; }
+  }
+
+  .preview-ribbon {
+    position: fixed; top: 22px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: #4a4a4a;
+    z-index: 10; pointer-events: none;
+  }
+
+  .back-btn {
+    position: fixed; top: 50%; left: 18px;
+    transform: translateY(-50%);
+    width: 36px; height: 36px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    color: #6a6a6a;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    cursor: pointer; z-index: 10;
+    transition: all 0.2s ease;
+    display: none;
+  }
+  .back-btn.show { display: block; }
+  .back-btn:hover { color: #ffb84d; border-color: rgba(255,184,77,0.4); }
 </style>
 </head>
 <body>
-<div class="container">
 
-  <div id="form-view">
-    <div class="header">
-      <div class="tag">Sprint Wrap-Up</div>
-      <h1>You built something <span class="accent">real</span>.</h1>
-      <p>Before we close out, help me make this sprint even better for the next cohort. Takes&nbsp;2&nbsp;minutes.</p>
-    </div>
+<div class="hud">
+  <div class="hud-left"><span class="dot"></span><span>SPRINT.DEBRIEF</span></div>
+  <div class="hud-right"><span id="stepNum">00</span><span class="total"> / 05</span></div>
+</div>
+<div class="preview-ribbon">— preview build · not submitting anywhere —</div>
+<div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+<button class="back-btn" id="backBtn" title="Go back">←</button>
+<div class="toast-stack" id="toastStack"></div>
 
-    <!-- 1. Your Journey -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n1">01 / Your Journey</span>
-        <h3>Where were you, and where are you now?</h3>
-        <p class="hint">Pick the skill level that matches you best, before the sprint&nbsp;and&nbsp;today</p>
-      </div>
-      <div class="journey-group">
-        <div class="journey-label">Before the sprint</div>
-        <div class="energy-slider">
-          <input type="range" min="0" max="100" value="20" id="before" oninput="updateJourney(this.value, 'before-label')">
-        </div>
-        <div class="energy-value" id="before-label">Tried Lovable or other no-code tools</div>
-      </div>
-      <div class="journey-group" style="margin-top: 20px;">
-        <div class="journey-label">Right now</div>
-        <div class="energy-slider">
-          <input type="range" min="0" max="100" value="65" id="after" oninput="updateJourney(this.value, 'after-label')">
-        </div>
-        <div class="energy-value" id="after-label">Can connect real services (APIs, databases)</div>
-      </div>
-    </div>
-
-    <!-- 2. What was most helpful -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n2">02 / The Most Helpful Part</span>
-        <h3>What was most helpful?</h3>
-        <p class="hint">Pick all that apply</p>
-      </div>
-      <div class="chip-group" id="helpful-chips">
-        <button type="button" class="chip" onclick="toggleChip(this)">Learning Claude Code</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Writing better prompts</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Understanding the user journey</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Connecting real services (APIs, databases)</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Deploying live apps</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">1:1 support from Jitakshi</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Building in community</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Demo day prep</button>
-      </div>
-      <textarea class="big-input" id="most-helpful" rows="2" style="margin-top: 14px;" placeholder="Anything else? (optional)"></textarea>
-    </div>
-
-    <!-- 3. What was missing -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n3">03 / What You'd Want More Of</span>
-        <h3>What should we add or cover more?</h3>
-        <p class="hint">Pick all that apply</p>
-      </div>
-      <div class="chip-group" id="missing-chips">
-        <button type="button" class="chip" onclick="toggleChip(this)">More hands-on time</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Deeper API integrations</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Design and UI training</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Marketing your app</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Payments and monetization</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">App Store publishing</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">AI agents and automation</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">More office hours</button>
-      </div>
-      <textarea class="big-input" id="missing" rows="2" style="margin-top: 14px;" placeholder="Anything else? (optional)"></textarea>
-    </div>
-
-    <!-- 4. One word + testimonial -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n4">04 / In One Word</span>
-        <h3>This sprint was...</h3>
-        <p class="hint">Pick the one that fits best</p>
-      </div>
-      <div class="chip-group" id="word-chips">
-        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Life-changing</button>
-        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Empowering</button>
-        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Eye-opening</button>
-        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Practical</button>
-        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Inspiring</button>
-        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Challenging</button>
-        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Fun</button>
-        <button type="button" class="chip" onclick="toggleChipSingle(this, 'word-chips')">Exactly what I needed</button>
-      </div>
-      <p class="chip-hint">Now add one sentence about your experience (I may share this&nbsp;with&nbsp;permission):</p>
-      <textarea class="big-input" id="testimonial" rows="3" style="margin-top: 10px;" placeholder="e.g. I walked in with an idea and walked out with a real product I can show people..."></textarea>
-    </div>
-
-    <!-- 5. Pricing -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n5">05 / The Value</span>
-        <h3>Imagine this wasn't sponsored...</h3>
-        <p class="hint">If you were paying for this sprint yourself, how much would it be worth to&nbsp;you?</p>
-      </div>
-      <div class="pricing-section">
-        <div class="price-display" id="price-display">$500</div>
-        <div class="price-reaction" id="price-reaction">A reasonable investment</div>
-        <div class="recommend-slider">
-          <input type="range" min="0" max="3000" step="100" value="500" id="price" oninput="updatePrice(this.value)">
-        </div>
-        <div class="recommend-scale">
-          <span>Free</span><span>$1,500</span><span>$3,000+</span>
-        </div>
-      </div>
-      <p style="font-size: 13px; color: #555; margin-top: 16px; text-align: center;">This helps me plan and price future cohorts fairly.</p>
-    </div>
-
-    <!-- 6. What's next -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n6">06 / What's Next</span>
-        <h3>What do you want next?</h3>
-        <p class="hint">Pick all that apply</p>
-      </div>
-      <div class="chip-group" id="next-chips">
-        <button type="button" class="chip" onclick="toggleChip(this)">Launch my app to real customers</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Add payments (Stripe)</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Build another app</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Learn AI automation</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Marketing + growth</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Turn my app into a business</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Advanced Claude Code features</button>
-        <button type="button" class="chip" onclick="toggleChip(this)">Ongoing 1:1 support from Jitakshi</button>
-      </div>
-      <textarea class="big-input" id="whats-next" rows="2" style="margin-top: 14px;" placeholder="Anything else? (optional)"></textarea>
-    </div>
-
-    <!-- 7. Name -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-num n7">07 / Who You Are</span>
-        <h3>Your name <span class="required">*</span></h3>
-        <p class="hint">So I can connect your feedback to&nbsp;your&nbsp;project</p>
-      </div>
-      <input type="text" class="big-input" id="name" placeholder="Your name" required>
-    </div>
-
-    <button class="submit-btn" onclick="submitForm()">Submit My Wrap-Up</button>
+<!-- 00 TITLE -->
+<section class="stage title-stage" data-step="0">
+  <div class="frame center">
+    <div class="title">SPRINT<br><span class="accent">DEBRIEF.</span></div>
+    <div class="sub">Volta · Cohort 01 · 04 weeks · 10 builds</div>
+    <div class="meta">5 questions<span class="sep">·</span>~3 minutes<span class="sep">·</span>your founder card at the end</div>
+    <div class="start" id="startBtn">▸ press enter to begin</div>
   </div>
+</section>
 
-  <!-- Success screen -->
-  <div class="success-screen" id="success-view">
-    <div class="celebrate">🎉</div>
-    <h2>Thank you!</h2>
-    <p>Your feedback just made the next sprint better for someone else. You built something real this month. I'm proud of&nbsp;you.</p>
-    <p style="margin-top: 24px; color: #c8ff00; font-weight: 700;">Now go share what you built with&nbsp;the&nbsp;world.</p>
+<!-- 01 BUILD -->
+<section class="stage" data-step="1">
+  <div class="frame">
+    <div class="tag">01 · The build</div>
+    <h1 class="q">Tag your build.</h1>
+    <div class="stack">
+      <input class="field" id="f-name" type="text" placeholder="Project name">
+      <input class="field" id="f-link" type="url" placeholder="Live link (https://)">
+      <input class="field" id="f-line" type="text" placeholder="It's a ___ for ___">
+    </div>
   </div>
+</section>
 
-  <div class="footer">
-    <p>Volta AI Build Sprint . April 2026 . Facilitated by Jitakshi</p>
+<!-- 02 SHIFT -->
+<section class="stage" data-step="2">
+  <div class="frame">
+    <div class="tag">02 · The shift</div>
+    <h1 class="q">Day one vs. today.</h1>
+
+    <div class="slider-block">
+      <div class="slider-row">
+        <div class="slider-label">
+          <span class="when">Day 1 of the sprint</span>
+          <span class="val"><span id="day1Val">25</span><span class="unit">/100</span></span>
+        </div>
+        <input type="range" class="slider" id="day1Slider" min="0" max="100" value="25">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">
+          <span class="when">Today, after week 4</span>
+          <span class="val"><span id="todayVal">75</span><span class="unit">/100</span></span>
+        </div>
+        <input type="range" class="slider" id="todaySlider" min="0" max="100" value="75">
+      </div>
+    </div>
+
+    <div class="delta-display">
+      <span class="delta-label">▸ The shift</span>
+      <span class="delta-num" id="deltaNum">+50</span>
+    </div>
   </div>
+</section>
 
+<!-- 03 PRICE + WHY (merged) -->
+<section class="stage price-stage" data-step="3">
+  <div class="frame">
+    <div class="tag" style="display:inline-flex;">03 · The price</div>
+    <h1 class="q" style="text-align:center;">What's it worth to you?</h1>
+    <div class="price-row">
+      <span class="dollar">$</span>
+      <input class="price-input" id="priceInput" type="text" inputmode="numeric" placeholder="0" maxlength="6">
+    </div>
+
+    <div class="why-reveal" id="whyReveal">
+      <div class="chip-label center">▸ what drove that? (tap any)</div>
+      <div class="chip-row center" data-chips="why">
+        <div class="chip">The build</div>
+        <div class="chip">The room</div>
+        <div class="chip">Time saved</div>
+        <div class="chip">Confidence gained</div>
+        <div class="chip">Skills leveled</div>
+        <div class="chip">Connections</div>
+        <div class="chip">The Tuesday rhythm</div>
+        <div class="chip">Accountability</div>
+        <div class="chip">Honest feedback</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 PATCH -->
+<section class="stage" data-step="4">
+  <div class="frame">
+    <div class="tag">04 · Patch notes</div>
+    <h1 class="q">What would you change?</h1>
+    <div class="micro">If you ran cohort 02 — what would you do differently?</div>
+    <div class="chip-label">Where</div>
+    <div class="chip-row" data-chips="where" data-single>
+      <div class="chip">The format</div>
+      <div class="chip">The pace</div>
+      <div class="chip">The teaching</div>
+      <div class="chip">The space</div>
+      <div class="chip">The tools</div>
+      <div class="chip">The vibe</div>
+      <div class="chip">Something else</div>
+    </div>
+    <div class="stack">
+      <input class="field" id="f-change" type="text" placeholder="In one line, what would help most...">
+    </div>
+  </div>
+</section>
+
+<!-- 05 TESTIMONIAL + NEWSLETTER (merged) -->
+<section class="stage quote-stage" data-step="5">
+  <div class="frame">
+    <div class="big-quote">"</div>
+    <div class="tag">05 · The wrap</div>
+    <h1 class="q">Leave a testimonial.</h1>
+    <div class="micro">One line is plenty. Goes on the page for cohort 02.</div>
+
+    <div class="stack">
+      <textarea class="field" id="f-quote" placeholder="The thing about this sprint is..."></textarea>
+    </div>
+
+    <div class="credit-row">
+      <input class="field" id="f-yourname" type="text" placeholder="Your name (for credit)">
+      <input class="field" id="f-yourrole" type="text" placeholder="Role / project (optional)">
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="bonus-toggle" id="bonusToggle">
+      <span class="mark"></span>
+      <span>Feature my project in the newsletter (100+ subs)</span>
+    </div>
+    <div class="bonus-reveal" id="bonusReveal">
+      <div class="field-mini">What would actually help right now?</div>
+      <input class="field" id="f-news-ask" type="text" placeholder="Early users? A specific kind of feedback? Intros?">
+    </div>
+  </div>
+</section>
+
+<!-- END — Founder Card -->
+<section class="stage end-stage" data-step="6">
+  <div class="frame center">
+    <div class="badge">▸ debrief complete</div>
+    <div class="saved">Your founder card.</div>
+
+    <div class="founder-card" id="founderCard">
+      <div class="corner-tr"></div>
+      <div class="corner-bl"></div>
+
+      <div class="card-header card-piece">
+        <span>Volta · AI Build Sprint</span>
+        <span class="card-num">Cohort 01 · Apr 2026</span>
+      </div>
+
+      <div class="card-title card-piece" id="cardTitle">PROJECT</div>
+      <div class="card-byline card-piece" id="cardByline"><span class="by">by</span><span id="cardBylineName"></span></div>
+      <div class="card-tagline card-piece" id="cardTagline"></div>
+
+      <div class="card-divider card-piece"></div>
+
+      <div class="card-piece">
+        <div class="card-stat-row">
+          <span class="card-stat-label">Growth</span>
+          <span class="card-stat-dots">··················</span>
+          <span class="card-stat-val" id="cardGrowth">+50</span>
+        </div>
+      </div>
+
+      <div class="card-section card-piece" id="cardTraitsSection">
+        <div class="card-section-label">Powered by</div>
+        <div class="card-traits" id="cardTraits"></div>
+      </div>
+
+      <div class="card-piece" id="cardLinkWrap">
+        <a class="card-link" id="cardLink" href="#" target="_blank" rel="noopener">▸ visit project</a>
+      </div>
+    </div>
+
+    <button class="download-btn" id="downloadBtn">▸ download card</button>
+
+    <div class="seal">— well played —</div>
+    <span class="share-hint">save it · share it · send it to a friend</span>
+  </div>
+</section>
+
+<div class="cues">
+  <span class="group"><kbd>↵ Enter</kbd> continue</span>
+  <span class="group"><kbd>Shift</kbd>+<kbd>↵</kbd> new line</span>
+  <span class="group"><kbd>←</kbd> back</span>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-  // Journey labels with concrete skill markers
-  const journeyLabels = [
-    { max: 15, text: 'Just using ChatGPT or other AI chats' },
-    { max: 35, text: 'Tried Lovable or other no-code tools' },
-    { max: 55, text: 'Comfortable prompting Claude Code' },
-    { max: 75, text: 'Can connect real services (APIs, databases)' },
-    { max: 90, text: 'Can deploy and iterate on live apps' },
-    { max: 100, text: 'Building and shipping independently' }
-  ];
+  const stages = document.querySelectorAll('.stage');
+  const stepNum = document.getElementById('stepNum');
+  const progressFill = document.getElementById('progressFill');
+  const backBtn = document.getElementById('backBtn');
+  const total = stages.length - 2;
+  let current = 0;
 
-  function updateJourney(val, labelId) {
-    const label = journeyLabels.find(l => val <= l.max);
-    document.getElementById(labelId).textContent = label.text;
+  function show(i) {
+    stages.forEach(s => s.classList.remove('active'));
+    stages[i].classList.add('active');
+    current = i;
+
+    if (i === 0) {
+      stepNum.textContent = '00';
+      progressFill.style.width = '0%';
+      backBtn.classList.remove('show');
+    } else if (i === stages.length - 1) {
+      stepNum.textContent = String(total).padStart(2, '0');
+      progressFill.style.width = '100%';
+      backBtn.classList.remove('show');
+      renderFounderCard();
+    } else {
+      stepNum.textContent = String(i).padStart(2, '0');
+      progressFill.style.width = (i / total) * 100 + '%';
+      backBtn.classList.add('show');
+    }
+
+    setTimeout(() => {
+      const input = stages[i].querySelector('input:not([type="range"]), textarea');
+      if (input) input.focus();
+    }, 380);
   }
 
-  // Chip pickers
-  function toggleChip(el) {
-    el.classList.toggle('selected');
+  // Achievement toasts
+  function showToast(label, value) {
+    const stack = document.getElementById('toastStack');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span class="achievement-tag">▸ ACHV</span>${label}${value ? '  ' + value : ''}`;
+    stack.appendChild(toast);
+    requestAnimationFrame(() => toast.classList.add('in'));
+    setTimeout(() => {
+      toast.classList.remove('in');
+      setTimeout(() => toast.remove(), 450);
+    }, 2000);
   }
 
-  function toggleChipSingle(el, groupId) {
-    const group = document.getElementById(groupId);
-    group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
+  function toastForCompletedStep(step) {
+    if (step === 1) return ['BUILD TAGGED', null];
+    if (step === 2) {
+      const d = parseInt(document.getElementById('todaySlider').value)
+              - parseInt(document.getElementById('day1Slider').value);
+      return ['GROWTH UNLOCKED', (d >= 0 ? '+' : '') + d];
+    }
+    if (step === 3) {
+      const p = document.getElementById('priceInput').value.trim();
+      return ['VALUE LOCKED', p ? '$' + p : null];
+    }
+    if (step === 4) return ['FEEDBACK FILED', null];
+    return null;
   }
 
-  function getSelectedChips(groupId) {
-    return Array.from(document.querySelectorAll('#' + groupId + ' .chip.selected'))
-      .map(c => c.textContent.trim())
-      .join(', ');
+  function next() {
+    if (current < stages.length - 1) {
+      const t = toastForCompletedStep(current);
+      if (t) showToast(t[0], t[1]);
+      show(current + 1);
+    }
   }
+  function back() { if (current > 0 && current < stages.length - 1) show(current - 1); }
+  backBtn.addEventListener('click', back);
 
-  // Price reactions
-  function updatePrice(val) {
-    const num = parseInt(val);
-    const display = document.getElementById('price-display');
-    const reaction = document.getElementById('price-reaction');
-    display.textContent = num === 0 ? 'Free' : num >= 3000 ? '$3,000+' : '$' + num.toLocaleString();
-    let text = '';
-    if (num === 0) text = 'Should stay free forever';
-    else if (num < 300) text = 'Very accessible price point';
-    else if (num < 700) text = 'A reasonable investment';
-    else if (num < 1200) text = 'Premium but fair';
-    else if (num < 2000) text = 'This is a real investment';
-    else if (num < 2700) text = 'High-end transformational';
-    else text = 'Top tier, life-changing';
-    reaction.textContent = text;
-  }
-
-  // Submit
-  async function submitForm() {
-    const btn = document.querySelector('.submit-btn');
-
-    // Validate name
-    const nameField = document.getElementById('name');
-    if (!nameField.value.trim()) {
-      alert('Please add your name before submitting.');
-      nameField.focus();
-      nameField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      if (e.target.tagName === 'TEXTAREA' && e.shiftKey) return;
+      e.preventDefault();
+      next();
       return;
     }
+    if (e.key === 'ArrowLeft' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      back();
+    }
+  });
 
+  document.getElementById('startBtn').addEventListener('click', next);
+
+  document.querySelectorAll('[data-chips]').forEach(group => {
+    const single = group.hasAttribute('data-single');
+    group.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (single) {
+          group.querySelectorAll('.chip').forEach(x => x.classList.remove('selected'));
+          chip.classList.add('selected');
+        } else {
+          chip.classList.toggle('selected');
+        }
+      });
+    });
+  });
+
+  // Sliders
+  const day1 = document.getElementById('day1Slider');
+  const today = document.getElementById('todaySlider');
+  const day1Val = document.getElementById('day1Val');
+  const todayVal = document.getElementById('todayVal');
+  const deltaNum = document.getElementById('deltaNum');
+  function updateDelta() {
+    const d1 = parseInt(day1.value), td = parseInt(today.value);
+    day1Val.textContent = d1;
+    todayVal.textContent = td;
+    const delta = td - d1;
+    deltaNum.textContent = (delta >= 0 ? '+' : '') + delta;
+    deltaNum.style.color = delta >= 0 ? '#ffb84d' : '#ff6a6a';
+  }
+  day1.addEventListener('input', updateDelta);
+  today.addEventListener('input', updateDelta);
+  updateDelta();
+
+  // Price → reveal "what drove that?" chips + lock-in glow on blur
+  const priceInput = document.getElementById('priceInput');
+  const whyReveal = document.getElementById('whyReveal');
+  priceInput.addEventListener('input', () => {
+    if (priceInput.value.trim().length > 0) {
+      whyReveal.classList.add('show');
+    } else {
+      whyReveal.classList.remove('show');
+      priceInput.classList.remove('locked');
+    }
+  });
+  priceInput.addEventListener('blur', () => {
+    if (priceInput.value.trim().length > 0) {
+      priceInput.classList.remove('locked');
+      // re-trigger animation
+      void priceInput.offsetWidth;
+      priceInput.classList.add('locked');
+    }
+  });
+
+  // Newsletter bonus toggle
+  const bonusToggle = document.getElementById('bonusToggle');
+  const bonusReveal = document.getElementById('bonusReveal');
+  bonusToggle.addEventListener('click', () => {
+    const on = bonusToggle.classList.toggle('on');
+    bonusReveal.classList.toggle('show', on);
+    if (on) {
+      setTimeout(() => document.getElementById('f-news-ask').focus(), 250);
+    }
+  });
+
+  function renderFounderCard() {
+    const get = (id) => document.getElementById(id)?.value?.trim() || '';
+    const project = get('f-name') || 'Untitled build';
+    const tagline = get('f-line');
+    const link = get('f-link');
+    const name = get('f-yourname');
+    const d = parseInt(today.value) - parseInt(day1.value);
+    const growth = (d >= 0 ? '+' : '') + d;
+
+    const traitChips = document.querySelectorAll('[data-chips="why"] .chip.selected');
+    const traits = Array.from(traitChips).map(c => c.textContent);
+
+    document.getElementById('cardTitle').textContent = project.toUpperCase();
+
+    const bylineEl = document.getElementById('cardByline');
+    const bylineName = document.getElementById('cardBylineName');
+    if (name) {
+      bylineName.textContent = name.toUpperCase();
+      bylineEl.style.display = '';
+    } else {
+      bylineEl.style.display = 'none';
+    }
+
+    const taglineEl = document.getElementById('cardTagline');
+    if (tagline) {
+      taglineEl.textContent = tagline;
+      taglineEl.style.display = '';
+    } else {
+      taglineEl.style.display = 'none';
+    }
+
+    document.getElementById('cardGrowth').textContent = growth;
+    document.getElementById('cardGrowth').style.color = d >= 0 ? '#ffb84d' : '#ff6a6a';
+
+    const traitsEl = document.getElementById('cardTraits');
+    const traitsSection = document.getElementById('cardTraitsSection');
+    if (traits.length > 0) {
+      traitsEl.innerHTML = traits.map(t => `<span class="trait">${t}</span>`).join('');
+      traitsSection.style.display = '';
+    } else {
+      traitsSection.style.display = 'none';
+    }
+
+    const linkWrap = document.getElementById('cardLinkWrap');
+    if (link) {
+      const linkEl = document.getElementById('cardLink');
+      linkEl.href = link;
+      linkEl.textContent = '▸ visit ' + (project.length > 20 ? 'project' : project.toLowerCase());
+      linkWrap.style.display = '';
+    } else {
+      linkWrap.style.display = 'none';
+    }
+
+    // Stagger reveal — pieces fade in like a card unpacking
+    const pieces = document.querySelectorAll('.founder-card .card-piece');
+    pieces.forEach(p => p.classList.remove('in'));
+    pieces.forEach((p, i) => {
+      if (p.style.display === 'none') return;
+      setTimeout(() => p.classList.add('in'), 140 + i * 110);
+    });
+  }
+
+  // Download founder card as PNG
+  async function downloadCard() {
+    const btn = document.getElementById('downloadBtn');
+    const originalText = btn.textContent;
+    btn.textContent = '▸ generating...';
     btn.disabled = true;
-    btn.textContent = 'Sending...';
-
-    const data = {
-      name: nameField.value.trim(),
-      before_sprint: document.getElementById('before').value,
-      before_label: document.getElementById('before-label').textContent,
-      after_sprint: document.getElementById('after').value,
-      after_label: document.getElementById('after-label').textContent,
-      most_helpful_picks: getSelectedChips('helpful-chips'),
-      most_helpful_other: document.getElementById('most-helpful').value,
-      missing_picks: getSelectedChips('missing-chips'),
-      missing_other: document.getElementById('missing').value,
-      one_word: getSelectedChips('word-chips'),
-      testimonial: document.getElementById('testimonial').value,
-      willing_to_pay: '$' + document.getElementById('price').value,
-      whats_next_picks: getSelectedChips('next-chips'),
-      whats_next_other: document.getElementById('whats-next').value
-    };
 
     try {
-      await fetch('https://script.google.com/macros/s/AKfycbwIqLPpVxonIqwjsmhoZs3nd7F8xJ_puPbKNMovhq41UKmq2v74HXoWowNGgoaOHpsw/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+
+      // Force all card pieces visible for capture (in case animation hasn't finished)
+      const pieces = document.querySelectorAll('.founder-card .card-piece');
+      pieces.forEach(p => p.classList.add('in'));
+
+      const card = document.getElementById('founderCard');
+      const projectRaw = document.getElementById('f-name').value.trim() || 'founder-card';
+      const slug = projectRaw
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'founder-card';
+
+      const canvas = await html2canvas(card, {
+        backgroundColor: '#0a0a0a',
+        scale: 2,
+        useCORS: true,
+        logging: false,
       });
 
-      document.getElementById('form-view').style.display = 'none';
-      document.getElementById('success-view').classList.add('show');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (err) {
-      alert('Something went wrong sending your feedback. Please try again or email Jitakshi directly.');
-      btn.disabled = false;
-      btn.textContent = 'Submit My Wrap-Up';
+      const link = document.createElement('a');
+      link.download = `${slug}-volta-sprint-2026.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+
+      btn.textContent = '▸ saved ↓';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 1600);
+    } catch (e) {
+      console.error('Download failed:', e);
+      btn.textContent = '▸ try again';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 2000);
     }
   }
+
+  document.getElementById('downloadBtn').addEventListener('click', downloadCard);
+
+  show(0);
 </script>
+
 </body>
 </html>
