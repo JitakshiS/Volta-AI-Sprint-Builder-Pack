@@ -1050,7 +1050,7 @@
   <span class="group"><kbd>⌘</kbd>+<kbd>←</kbd> back</span>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.min.js"></script>
 <script>
   const stages = document.querySelectorAll('.stage');
   const stepNum = document.getElementById('stepNum');
@@ -1290,16 +1290,15 @@
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '') || 'founder-card';
 
-      const canvas = await html2canvas(card, {
+      const dataUrl = await htmlToImage.toPng(card, {
         backgroundColor: '#0a0a0a',
-        scale: 2,
-        useCORS: true,
-        logging: false,
+        pixelRatio: 2,
+        cacheBust: true,
       });
 
       const link = document.createElement('a');
       link.download = `${slug}-volta-sprint-2026.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.href = dataUrl;
       link.click();
 
       btn.textContent = '▸ saved ↓';
