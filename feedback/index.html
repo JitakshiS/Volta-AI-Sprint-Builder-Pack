@@ -1346,6 +1346,13 @@
       newsletter_optin: newsletterOptIn ? 'yes' : 'no'
     };
 
+    // Backup to localStorage in case the sheet write silently fails
+    try {
+      const backups = JSON.parse(localStorage.getItem('volta_debrief_backups') || '[]');
+      backups.push({ ts: new Date().toISOString(), data });
+      localStorage.setItem('volta_debrief_backups', JSON.stringify(backups));
+    } catch (e) { /* localStorage unavailable — non-fatal */ }
+
     try {
       fetch(SHEET_ENDPOINT, {
         method: 'POST',
