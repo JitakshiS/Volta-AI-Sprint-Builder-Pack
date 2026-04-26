@@ -744,6 +744,7 @@
     text-decoration: none;
     text-transform: uppercase;
     transition: all 0.2s ease;
+    white-space: nowrap;
   }
   .card-link:hover {
     background: rgba(255,184,77,0.12);
@@ -1292,8 +1293,9 @@
 
       const dataUrl = await htmlToImage.toPng(card, {
         backgroundColor: '#0a0a0a',
-        pixelRatio: 2,
+        pixelRatio: 3,
         cacheBust: true,
+        quality: 1,
       });
 
       const link = document.createElement('a');
